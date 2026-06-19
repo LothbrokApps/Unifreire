@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFB81C">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unifreire - ¡Tu puedes ser un Jaguar!</title>
+    <link rel="icon" href="assets/images/logo.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .career-hero {
+            padding: 8rem 5% 4rem 5%;
+            background: linear-gradient(135deg, var(--unifreire-green) 0%, var(--bg-dark) 100%);
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .career-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--unifreire-yellow);
+        }
+
+        .career-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .career-meta span {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .career-desc {
+            font-size: 1.2rem;
+            max-width: 800px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .plan-section {
+            padding: 4rem 5%;
+        }
+
+        .plan-section h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--unifreire-yellow);
+        }
+
+        .cuatrimestre-card {
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .cuatrimestre-card:hover {
+            border-color: var(--unifreire-yellow);
+        }
+
+        .cuatrimestre-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--unifreire-green-light);
+        }
+
+        .materias-list {
+            list-style-type: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .materias-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .materias-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--unifreire-yellow);
+        }
+
+        .back-btn {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 2rem;
+            transition: var(--transition-smooth);
+        }
+
+        .back-btn:hover {
+            color: var(--unifreire-yellow);
+        }
+        
+        .cta-container {
+            text-align: center;
+            padding: 4rem 0;
+            background: rgba(0, 77, 54, 0.2);
+            border-top: 1px solid var(--glass-border);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar glass" style="padding: 1rem 5%;">
+        <a href="index.html" class="brand" style="text-decoration: none;"><img loading="lazy" src="assets/images/logo.png" alt="Unifreire" style="height: 40px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));"></a>
+        <button class="hamburger" id="hamburger-menu" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="index.html" style="text-decoration:none; color:white; font-weight:500;">Inicio</a>
+            <a href="index.html#carreras" style="text-decoration:none; color:white; font-weight:500;">Carreras</a>
+            <a href="index.html#experiencia-jaguar" style="text-decoration:none; color:white; font-weight:500;">Experiencia Jaguar</a>
+            <a href="vocational.html" style="text-decoration:none; color:white; font-weight:500;">Test Vocacional</a>
+            <a href="https://wa.me/message/VP27JTT7ZB55G1" target="_blank" style="display: flex; align-items: center; gap: 0.3rem; text-decoration: none; color: #25D366; font-weight: 600;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg> WhatsApp
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="career-hero">
+        <a href="index.html" class="back-btn">← Volver al catálogo</a>
+        <h1 id="c-name">Cargando...</h1>
+        <div class="career-meta">
+            <span id="c-duration">Cargando...</span>
+            <span id="c-rvoe">Cargando...</span>
+        </div>
+        <p class="career-desc" id="c-desc"></p>
+    </div>
+
+    
+    <section class="plan-section career-split-layout">
+        <div>
+            <h2>Plan de Estudios</h2>
+            <div id="plan-container">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+        <div id="promo-container">
+            <div class="promo-card" id="card-saltillo">
+                <!-- Beneficios Retractil -->
+                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem; overflow: hidden; padding: 0;">
+                    <div class="cuatrimestre-header" onclick="toggleAccordion(this)" style="padding: 1rem 1.5rem; background: rgba(0,77,54,0.3);">
+                        <div class="cuatrimestre-title" style="margin-bottom:0; font-size: 1.1rem; color: var(--unifreire-yellow);">Beneficios</div>
+                        <span class="acc-icon" style="color:var(--unifreire-yellow);">▶</span>
+                    </div>
+                    <div class="cuatrimestre-content" style="display: none; padding: 0 1.5rem 1.5rem 1.5rem; margin-top: 0; border-top: none;">
+                        <ul style="margin-top: 1rem; margin-bottom: 0;">
+                            <li>Convenios para servicio social y prácticas profesionales</li>
+                            <li>Visitas a instituciones relacionadas con tu carrera</li>
+                            <li>Clases teóricas y prácticas</li>
+                            <li>Docentes activos y en constante preparación</li>
+                            <li>Maestros con experiencia, muchos provenientes de la UANL</li>
+                            <li>Ambiente de compañerismo y grupos accesibles</li>
+                            <li>Acompañamiento constante durante toda tu carrera</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Requisitos de Inscripción Retractil -->
+                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem; overflow: hidden; padding: 0;">
+                    <div class="cuatrimestre-header" onclick="toggleAccordion(this)" style="padding: 1rem 1.5rem; background: rgba(0,77,54,0.3);">
+                        <div class="cuatrimestre-title" style="margin-bottom:0; font-size: 1.1rem; color: var(--unifreire-yellow);">Requisitos de Inscripción</div>
+                        <span class="acc-icon" style="color:var(--unifreire-yellow);">▼</span>
+                    </div>
+                    <div class="cuatrimestre-content" style="display: block; padding: 0 1.5rem 1.5rem 1.5rem; margin-top: 0; border-top: none;">
+                        <div id="dyn-req-saltillo" style="margin-top: 1rem; margin-bottom: 0;">
+                            <!-- Inyectado via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buscar RVOES -->
+                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem; overflow: hidden; padding: 0;">
+                    <div class="cuatrimestre-header" onclick="toggleAccordion(this)" style="padding: 1rem 1.5rem; background: rgba(0,77,54,0.3);">
+                        <div class="cuatrimestre-title" style="margin-bottom:0; font-size: 1.1rem; color: var(--unifreire-yellow);">Buscar RVOES</div>
+                        <span class="acc-icon" style="color:var(--unifreire-yellow);">▶</span>
+                    </div>
+                    <div class="cuatrimestre-content" style="display: none; padding: 0 1.5rem 1.5rem 1.5rem; margin-top: 0; border-top: none;">
+                        <div style="margin-top: 1rem;">
+                            <label style="color:var(--unifreire-yellow); font-size:0.9rem; margin-bottom:0.3rem; display:block;">Saltillo RVOES</label>
+                            <select class="rvoe-select" onchange="showRvoeSearchBtn(this)" style="width:100%; padding:0.5rem; border-radius:4px; background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); color:white; margin-bottom: 1rem; font-size:0.8rem;">
+                                <option value="" style="color:black;">-- Seleccionar Carrera --</option>
+                                <option value="1" style="color:black;">Ing. Industrial y de sistemas (ESTATAL 20233075)(Modalidad ESCOLARIZADO)</option>
+                                <option value="2" style="color:black;">Lic. en Arquitectura (FEDERAL 20233077)(Modalidad ESCOLARIZADO)</option>
+                                <option value="3" style="color:black;">Lic. en Derecho (ESTATAL 20233078)(Modalidad ESCOLARIZADO)</option>
+                                <option value="4" style="color:black;">Lic. en Derecho (FEDERAL 20211147)(Modalidad MIXTO)</option>
+                                <option value="5" style="color:black;">Lic. en Derecho (FEDERAL 20211148)(Modalidad ESCOLARIZADO)</option>
+                                <option value="6" style="color:black;">Lic. en Administración (ESTATAL 0528113477)(Modalidad ESCOLARIZADO)</option>
+                                <option value="7" style="color:black;">Lic. en Administración (FEDERAL 20211146)(Modalidad MIXTO)</option>
+                                <option value="8" style="color:black;">Lic. en Administración (FEDERAL 20211145)(Modalidad ESCOLARIZADO)</option>
+                                <option value="9" style="color:black;">Lic. en Contaduría (FEDERAL 20194326)(Modalidad ESCOLARIZADO)</option>
+                                <option value="10" style="color:black;">Lic. en Criminología (FEDERAL 20211143)(Modalidad ESCOLARIZADO)</option>
+                                <option value="11" style="color:black;">Lic. en Criminología (FEDERAL 20211144)(Modalidad MIXTO)</option>
+                                <option value="12" style="color:black;">Lic. en Criminología (ESTATAL 0528173476)(Modalidad ESCOLARIZADO)</option>
+                                <option value="13" style="color:black;">Ing. en Mecatrónica (FEDERAL 20194325)</option>
+                                <option value="14" style="color:black;">Ing. Industrial en Manufactura (FEDERAL 20194327)</option>
+                            </select>
+
+                            <label style="color:var(--unifreire-yellow); font-size:0.9rem; margin-bottom:0.3rem; display:block;">Monterrey RVOES</label>
+                            <select class="rvoe-select" onchange="showRvoeSearchBtn(this)" style="width:100%; padding:0.5rem; border-radius:4px; background:rgba(255,255,255,0.1); border:1px solid var(--glass-border); color:white; font-size:0.8rem;">
+                                <option value="" style="color:black;">-- Seleccionar Carrera --</option>
+                                <option value="1" style="color:black;">Lic. en Ingeniería Industrial y de Sistemas (20233075)(Modalidad MIXTO)</option>
+                                <option value="2" style="color:black;">Lic. en Administración de Empresas (20233076)(Modalidad MIXTO)</option>
+                                <option value="3" style="color:black;">Lic. en Arquitectura (20233077)(Modalidad ESCOLARIZADO)</option>
+                                <option value="4" style="color:black;">Lic. en Derecho (20233078)(Modalidad MIXTO)</option>
+                                <option value="5" style="color:black;">Lic. en Contaduría Pública (20233079) (Modalidad MIXTO)</option>
+                            </select>
+
+                            <button id="btn-buscar-rvoe" onclick="openRvoeWarning()" class="btn-accent" style="display:none; width: 100%; margin-top: 1rem; border: none; font-size: 0.9rem; padding: 0.8rem; cursor: pointer;">Buscar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 0;">PLANTEL SALTILLO</h3>
+                
+                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem;">
+                    <!-- Split 2 columns -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; justify-content: space-between; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <h4 style="margin-top: 0; color: var(--unifreire-yellow); border-bottom: 1px solid rgba(255,184,28,0.3); padding-bottom: 0.5rem; margin-bottom: 1rem;">Costos:</h4>
+                            <div id="dyn-cost-saltillo" style="font-size: 0.9rem; padding-left: 1.2rem; margin:0;">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                        <div style="width: 1px; background: rgba(255,255,255,0.1); margin: 0 0.5rem;"></div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <h4 style="margin-top: 0; color: var(--unifreire-yellow); border-bottom: 1px solid rgba(255,184,28,0.3); padding-bottom: 0.5rem; margin-bottom: 1rem;">Modalidades y Horarios:</h4>
+                            <div id="dyn-mod-saltillo" style="font-size: 0.9rem; padding-left: 1.2rem; margin:0;">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,184,28,0.2); padding: 0.5rem; border-radius: 8px; margin: 1rem 0;">
+                        <p style="color: var(--unifreire-yellow); margin-bottom: 0; font-weight: bold; text-align: center;">✔ Sin examen de admisión</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center;">
+                        <button onclick="document.getElementById('becaModal').style.display='flex';" class="btn-primary" style="width: 100%; border: none; font-size: 0.9rem; padding: 0.8rem; cursor: pointer;">Aplicar Beca</button>
+                        <a href="#" class="whatsapp-btn" id="wa-saltillo" target="_blank" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; font-size: 0.9rem; padding: 0.8rem; margin: 0; width: 100%; box-sizing: border-box;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                              <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.004-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                            </svg>
+                            Más Información
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="promo-card" id="card-mty">
+                <h3 style="margin-bottom: 0;">PLANTEL MONTERREY</h3>
+                
+                <!-- Requisitos de Inscripción Retractil Monterrey -->
+                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem; overflow: hidden; padding: 0;">
+                    <div class="cuatrimestre-header" onclick="toggleAccordion(this)" style="padding: 1rem 1.5rem; background: rgba(0,77,54,0.3);">
+                        <div class="cuatrimestre-title" style="margin-bottom:0; font-size: 1.1rem; color: var(--unifreire-yellow);">Requisitos de Inscripción</div>
+                        <span class="acc-icon" style="color:var(--unifreire-yellow);">▼</span>
+                    </div>
+                    <div class="cuatrimestre-content" style="display: block; padding: 0 1.5rem 1.5rem 1.5rem; margin-top: 0; border-top: none;">
+                        <div id="dyn-req-mty" style="margin-top: 1rem; margin-bottom: 0;">
+                            <!-- Inyectado via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem;">
+                    <!-- Split 2 columns -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; justify-content: space-between; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <h4 style="margin-top: 0; color: var(--unifreire-yellow); border-bottom: 1px solid rgba(255,184,28,0.3); padding-bottom: 0.5rem; margin-bottom: 1rem;">Costos:</h4>
+                            <div id="dyn-cost-mty" style="font-size: 0.9rem; padding-left: 1.2rem; margin:0;">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                        <div style="width: 1px; background: rgba(255,255,255,0.1); margin: 0 0.5rem;"></div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <h4 style="margin-top: 0; color: var(--unifreire-yellow); border-bottom: 1px solid rgba(255,184,28,0.3); padding-bottom: 0.5rem; margin-bottom: 1rem;">Modalidades y Horarios:</h4>
+                            <div id="dyn-mod-mty" style="font-size: 0.9rem; padding-left: 1.2rem; margin:0;">
+                                <!-- JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,184,28,0.2); padding: 0.5rem; border-radius: 8px; margin: 1rem 0;">
+                        <p style="color: var(--unifreire-yellow); margin-bottom: 0; font-weight: bold; text-align: center;">✔ Sin examen de admisión</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center;">
+                        <button onclick="document.getElementById('becaModal').style.display='flex';" class="btn-primary" style="width: 100%; border: none; font-size: 0.9rem; padding: 0.8rem; cursor: pointer;">Aplicar Beca</button>
+                        <a href="#" class="whatsapp-btn" id="wa-mty" target="_blank" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; font-size: 0.9rem; padding: 0.8rem; margin: 0; width: 100%; box-sizing: border-box;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                              <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.004-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                            </svg>
+                            Más Información
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <div class="cta-container">
+        <h2 style="margin-bottom: 1.5rem;">¿Listo para iniciar tu futuro?</h2>
+        <button class="btn-accent" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="aplicar()">APLICAR EN ESTA CARRERA</button>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const id = localStorage.getItem('carreraSeleccionada');
+            if(!id || !CAREERS_DATA[id]) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const carrera = CAREERS_DATA[id];
+            
+            const savedBanner = localStorage.getItem(`unifreire_banner_${id}`);
+            const pos = localStorage.getItem(`unifreire_banner_pos_${id}`) || 'center';
+            const zoom = localStorage.getItem(`unifreire_banner_zoom_${id}`) || 'cover';
+            const bannerUrl = savedBanner || carrera.defaultBanner;
+            if (bannerUrl) {
+                const zstr = zoom.includes('%') ? zoom : 'cover';
+                document.querySelector('.career-hero').style.background = `linear-gradient(to bottom, rgba(0,77,54,0.7), rgba(18,18,18,1)), url(${bannerUrl}) ${pos}/${zstr} no-repeat`;
+            }
+
+            document.getElementById('c-name').innerText = carrera.name;
+            document.getElementById('c-duration').innerText = carrera.duration;
+            document.getElementById('c-rvoe').innerText = carrera.rvoe;
+            document.getElementById('c-desc').innerText = carrera.description;
+
+            // --- INJECTED DYNAMIC LOCALSTORAGE OVERRIDE LOGIC ---
+            let override = {};
+
+            // FORCE WIPE TO APPLY NEW DEFAULTS
+            try {
+                const stored_v1 = localStorage.getItem('unifreire_careers_custom');
+                if (stored_v1) {
+                    let shouldWipe = false;
+                    const parsed = JSON.parse(stored_v1);
+                    // Check if it has old data for any career
+                    for (const key in parsed) {
+                        if (parsed[key].saltillo && typeof parsed[key].saltillo.costos === 'string') {
+                            if (parsed[key].saltillo.costos.includes('$1,500') || parsed[key].saltillo.costos.includes('<li><b>Licenciaturas:</b> Escolarizado $1,820 | Mixto $1,920</li>')) {
+                                shouldWipe = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (shouldWipe) {
+                        localStorage.removeItem('unifreire_careers_custom');
+                        override = {}; // reset
+                    }
+                }
+            } catch(e) {}
+
+            try {
+                const stored = localStorage.getItem('unifreire_careers_custom');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (parsed[id]) override = parsed[id];
+                }
+            } catch(e) {}
+
+            // Fallback strings
+            const req_html = `<p style="margin-bottom: 0.5rem; margin-top: 1rem;">Para realizar tu inscripción necesitas:</p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Acta de Nacimiento</li><li>Certificado de Bachillerato</li><li>Carta de Autenticidad</li><li>CURP</li><li>Pago del Seguro Facultativo</li><li>Comprobante de Domicilio</li><li>Identificación Oficial (INE)</li></ul>`;
+            const cost_saltillo = `<p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Licenciaturas Costo:</b></p><ul style="margin-bottom: 1rem; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $1,820</li><li>Mixto (Sábado y Domingo) $1,920</li></ul><p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Ingenierías Costo:</b></p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $2,100</li><li>Mixto (Sábado y Domingo) $2,200</li></ul>`;
+            const mod_saltillo = `<p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Modalidades disponibles:</b></p><p style="margin-bottom: 1rem;">Matutino, Intermedio, Vespertino, Turno Mixto</p><p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Horarios:</b></p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>Matutino:</b> 7:00 am a 10:00 am</li><li><b>Vespertino:</b> 6:00 pm a 9:00 pm</li><li><b>Intermedio:</b> 10:30 am a 1:30 pm</li><li><b>Turno Mixto:</b> Sábado o Domingo 8:00 am a 3:00 pm</li></ul>`;
+            const cost_mty = `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Inscripción $2,000</li><li>Mensualidad $2,000</li><li>Cuota interna $500</li><li>Seguro facultativo $1,250</li></ul>`;
+            const mod_mty = `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>MATUTINO:</b> LUNES A VIERNES 8:00AM A 11:00AM</li><li><b>SABATINO:</b> 8:00AM A 3:00PM</li><li><b>DOMINICAL:</b> 8:00AM A 3:00PM</li></ul>`;
+
+            // Overrides basic info
+            if (override.name) {
+                document.getElementById('c-name').innerText = override.name;
+                document.title = override.name + " | Unifreire";
+            }
+            if (override.description) {
+                document.getElementById('c-desc').innerText = override.description;
+            }
+
+            // Populate specific fields
+            if (document.getElementById('dyn-req-saltillo')) document.getElementById('dyn-req-saltillo').innerHTML = ((override.saltillo && override.saltillo.requisitos && override.saltillo.requisitos.trim() !== "") ? override.saltillo.requisitos : req_html);
+            if (document.getElementById('dyn-mod-saltillo')) document.getElementById('dyn-mod-saltillo').innerHTML = ((override.saltillo && override.saltillo.modalidades && override.saltillo.modalidades.trim() !== "") ? override.saltillo.modalidades : mod_saltillo);
+            if (document.getElementById('dyn-cost-saltillo')) document.getElementById('dyn-cost-saltillo').innerHTML = ((override.saltillo && override.saltillo.costos && override.saltillo.costos.trim() !== "") ? override.saltillo.costos : cost_saltillo);
+
+            if (document.getElementById('dyn-req-mty')) document.getElementById('dyn-req-mty').innerHTML = ((override.monterrey && override.monterrey.requisitos && override.monterrey.requisitos.trim() !== "") ? override.monterrey.requisitos : req_html);
+            if (document.getElementById('dyn-mod-mty')) document.getElementById('dyn-mod-mty').innerHTML = ((override.monterrey && override.monterrey.modalidades && override.monterrey.modalidades.trim() !== "") ? override.monterrey.modalidades : mod_mty);
+            if (document.getElementById('dyn-cost-mty')) document.getElementById('dyn-cost-mty').innerHTML = ((override.monterrey && override.monterrey.costos && override.monterrey.costos.trim() !== "") ? override.monterrey.costos : cost_mty);
+
+            // Visibility
+            const mtyCareers = ["ing-industrial", "lic-arquitectura", "lic-derecho", "lic-administracion", "lic-contaduria", "lic-criminologia", "ing-mecatronica"];
+            const isMtyAvailable = (override.availableMonterrey !== undefined) ? override.availableMonterrey : mtyCareers.includes(id);
+            const isSaltilloAvailable = (override.availableSaltillo !== undefined) ? override.availableSaltillo : true;
+
+            const cardMty = document.getElementById('card-mty');
+            if (cardMty) {
+                cardMty.style.display = isMtyAvailable ? 'block' : 'none';
+            }
+
+            // Hide the entire Saltillo h3 and card if not available
+            const h3s = document.querySelectorAll('h3');
+            let saltilloH3 = null;
+            h3s.forEach(el => {
+                if(el.innerText.includes('PLANTEL SALTILLO')) saltilloH3 = el;
+            });
+            if(saltilloH3 && !isSaltilloAvailable) {
+                saltilloH3.style.display = 'none';
+                if(saltilloH3.nextElementSibling && saltilloH3.nextElementSibling.classList.contains('cuatrimestre-card')) {
+                    saltilloH3.nextElementSibling.style.display = 'none';
+                }
+            }
+
+            let badgesHtml = '';
+            if (isSaltilloAvailable) badgesHtml += `<div class="badge">Disponible en Saltillo</div>`;
+            if (isMtyAvailable) badgesHtml += `<div class="badge">Disponible en Monterrey</div>`;
+            
+            document.getElementById('c-desc').innerHTML = (override.description || carrera.description) + `<div class="badges-container">${badgesHtml}</div>`;
+            // --- END DYNAMIC INJECTION ---
+
+
+
+
+
+            // Configurar enlaces WhatsApp
+            const mensaje = encodeURIComponent(`Hola, quisiera mas informacion sobre la carrera ${carrera.name}`);
+            document.getElementById('wa-saltillo').href = `https://wa.me/528444550030?text=${mensaje}`;
+            document.getElementById('wa-mty').href = `https://wa.me/528116370651?text=${mensaje}`;
+
+            // Acordeones Plan de Estudio
+            const planContainer = document.getElementById('plan-container');
+            let idx = 0;
+            carrera.plan.forEach(cuatri => {
+                const card = document.createElement('div');
+                card.className = 'cuatrimestre-card glass';
+                
+                let lis = '';
+                cuatri.materias.forEach(mat => {
+                    lis += `<li>${mat}</li>`;
+                });
+
+                const displayStyle = (idx < 2) ? 'block' : 'none';
+                const icon = (idx < 2) ? '▼' : '▶';
+
+                card.innerHTML = `
+                    <div class="cuatrimestre-header" onclick="toggleAccordion(this)">
+                        <div class="cuatrimestre-title" style="margin-bottom:0;">${cuatri.cuatrimestre}</div>
+                        <span class="acc-icon" style="color:var(--unifreire-yellow);">${icon}</span>
+                    </div>
+                    <div class="cuatrimestre-content" style="display: ${displayStyle};">
+                        <ul class="materias-list">
+                            ${lis}
+                        </ul>
+                    </div>
+                `;
+                planContainer.appendChild(card);
+                idx++;
+            });
+        });
+
+
+        function toggleAccordion(header) {
+            const allContents = document.querySelectorAll('.cuatrimestre-content');
+            const allIcons = document.querySelectorAll('.acc-icon');
+            
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.acc-icon');
+            const isCurrentlyOpen = content.style.display === 'block';
+
+            // Close all
+            allContents.forEach(c => c.style.display = 'none');
+            allIcons.forEach(i => i.innerText = '▶');
+
+            // Toggle targeted
+            if (!isCurrentlyOpen) {
+                content.style.display = 'block';
+                icon.innerText = '▼';
+            }
+        }
+        function aplicar() {
+
+            window.location.href = "admissions.html";
+        }
+    </script>
+
+    
+    
+    <!-- Floating Draggable Social Menu -->
+    <div id="social-container" style="position: fixed; bottom: 30px; left: 30px; z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+        <div id="social-menu" style="display: none; flex-direction: column; gap: 0.8rem; background: rgba(0,0,0,0.85); padding: 0.8rem; border-radius: 40px; border: 1px solid var(--unifreire-yellow); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            <a href="https://www.facebook.com/InstitutoUniversitarioPauloFreire" target="_blank" style="pointer-events: auto; width: 50px; height: 50px; border-radius: 50%; background: #1877F2; display: flex; align-items: center; justify-content: center; color: white; transition: transform 0.2s;" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/unifreireoficial" target="_blank" style="pointer-events: auto; width: 50px; height: 50px; border-radius: 50%; background: #D2042D; display: flex; align-items: center; justify-content: center; color: white; transition: transform 0.2s;" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@unifreire" target="_blank" style="pointer-events: auto; width: 50px; height: 50px; border-radius: 50%; background: #28282B; display: flex; align-items: center; justify-content: center; color: white; transition: transform 0.2s;" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.21-3.65-5.54-.2-2.33.8-4.7 2.51-6.16 1.74-1.48 4.12-2.02 6.32-1.45.02 1.48.01 2.96.01 4.44-1.3-.29-2.73-.25-3.95.27-1.16.48-2.08 1.48-2.39 2.7-.35 1.41.01 2.98 1.05 3.95 1.14 1.02 2.82 1.19 4.16.51 1.19-.6 1.88-1.89 1.95-3.25.13-3.68.04-7.38.07-11.06.01-2.45-.03-4.9.04-7.34z"/></svg>
+            </a>
+        </div>
+        <div id="social-fab" style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--unifreire-yellow), #d49813); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s;">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <footer style="background: rgba(0,0,0,0.9); border-top: 1px solid rgba(255,184,28,0.3); padding: 4rem 5%; color: white; margin-top: auto;">
+        <h3 style="color: var(--unifreire-yellow); margin-bottom: 2rem; font-size: 1.5rem; text-align: center;">Nuestros Planteles</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Centro</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 José María Arteaga 240<br>Zona Centro, Saltillo, Coah.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (844) 410-5762</p>
+                <a href="https://maps.app.goo.gl/tbLyqT6qCdnmW3in6" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Matamoros</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 Mariano Matamoros 766<br>Zona Centro, Saltillo, Coah.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (844) 726-0527</p>
+                <a href="https://maps.app.goo.gl/L3NqmizFhWFZWsFw9" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Sur</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 Calle 2 #2648, esq. Blvd. Hidalgo<br>Fracc. Miguel Hidalgo, Saltillo, Coah.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (844) 112-4654</p>
+                <a href="https://maps.app.goo.gl/v49aGjP2VZUDNmpSA" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Monterrey</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 Albino Espinosa Ote 324<br>entre Galeana y E. Carranza, N.L.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (81) 163-70651</p>
+                <a href="https://maps.app.goo.gl/fEiJBCyAh1eWbuLt7" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+        </div>
+        <p style="text-align: center; color: #666; margin-top: 3rem; font-size: 0.8rem;">&copy; 2026 UNIFREIRE. Todos los derechos reservados.</p>
+    </footer>
+
+        <!-- Security & Dynamic Social Script -->
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.code === "F12" || e.keyCode === 123) return false;
+            if(e.ctrlKey && e.shiftKey && (e.code === "KeyI" || e.code === "KeyJ" || e.code === "KeyC")) return false;
+            if(e.ctrlKey && e.code === "KeyU") return false;
+        };
+        const fab = document.getElementById('social-fab');
+        const menu = document.getElementById('social-menu');
+        if (fab && menu) {
+            fab.addEventListener('click', () => {
+                menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+            });
+        }
+    </script>
+
+    <script>
+        // Global Secret Admin Access
+        (function() {
+            let secretCode = "";
+            document.addEventListener("keydown", (e) => {
+                if (e.key) {
+                    secretCode += e.key.toLowerCase();
+                    if(secretCode.includes("mkt")) {
+                        window.location.href = "admin.html";
+                    }
+                    if(secretCode.length > 20) secretCode = secretCode.slice(-20);
+                }
+            });
+        })();
+    </script>
+
+
+    <!-- Modal de Beca -->
+    <div id="becaModal" style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center;">
+        <div class="card glass" style="width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
+            <span onclick="document.getElementById('becaModal').style.display='none';" style="position:absolute; top:15px; right:20px; color:#f1f1f1; font-size:30px; font-weight:bold; cursor:pointer;">&times;</span>
+            <h2 style="color: var(--unifreire-yellow); margin-bottom: 1rem;">Estudio Socioeconómico</h2>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 2rem;">Completa el siguiente formulario para aplicar a nuestro programa de apoyo financiero. Puedes alcanzar <b>hasta un 50% de beca</b> dependiendo de tus resultados. Toda la información es confidencial y solo se utilizará para evaluación.</p>
+            
+            <form id="becaForm" onsubmit="event.preventDefault(); submitBeca();">
+                <div style="margin-bottom: 1rem;">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="beca-nombre" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Teléfono / WhatsApp</label>
+                    <input type="tel" id="beca-telefono" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <label>Ingreso Familiar (MXN)</label>
+                        <select id="beca-ingreso" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                            <option value="Menos de $6,000" style="color:black;">Menos de $6,000</option>
+                            <option value="$6,000 - $12,000" style="color:black;">$6,000 - $12,000</option>
+                            <option value="$12,000 - $20,000" style="color:black;">$12,000 - $20,000</option>
+                            <option value="Más de $20,000" style="color:black;">Más de $20,000</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label>Gastos Fijos Aprox. (MXN)</label>
+                        <select id="beca-gastos" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                            <option value="Menos de $3,000" style="color:black;">Menos de $3,000</option>
+                            <option value="$3,000 - $8,000" style="color:black;">$3,000 - $8,000</option>
+                            <option value="$8,000 - $15,000" style="color:black;">$8,000 - $15,000</option>
+                            <option value="Más de $15,000" style="color:black;">Más de $15,000</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <label>Situación Laboral</label>
+                        <select id="beca-trabajo" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                            <option value="Trabajo tiempo completo" style="color:black;">Trabajo tiempo completo</option>
+                            <option value="Trabajo medio tiempo" style="color:black;">Trabajo medio tiempo</option>
+                            <option value="Desempleado / Estudiante" style="color:black;">Desempleado / Solo estudio</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label>Dependientes económicos</label>
+                        <input type="number" id="beca-dependientes" min="0" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Tipo de vivienda</label>
+                    <select id="beca-vivienda" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                        <option value="Rentada" style="color:black;">Rentada</option>
+                        <option value="Prestada / Familiar" style="color:black;">Prestada / Familiar</option>
+                        <option value="Propia (pagándose)" style="color:black;">Propia (pagándose)</option>
+                        <option value="Propia (pagada)" style="color:black;">Propia (pagada)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 2rem;">
+                    <label>Motivo principal para solicitar beca</label>
+                    <textarea id="beca-motivo" required rows="2" style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;" placeholder="Cuéntanos brevemente tu situación..."></textarea>
+                </div>
+                
+                <button type="submit" id="btnBecaSubmit" class="btn-primary" style="width: 100%; font-size: 1rem; border:none; cursor:pointer; padding: 1rem;">Enviar Solicitud y Evaluar</button>
+            </form>
+            
+            <div id="becaResult" style="display:none; margin-top: 1.5rem; padding: 1.5rem; background: rgba(0, 77, 54, 0.4); border-radius: 8px; border: 1px solid var(--unifreire-yellow); text-align: center;">
+                <h3 style="color: var(--unifreire-yellow); margin-bottom: 0.5rem;">¡Evaluación Completada!</h3>
+                <p id="becaMessage" style="color: white; font-size: 1.1rem; font-weight: bold;"></p>
+                <p style="font-size: 0.9rem; color: #bbb; margin-top: 1rem;">Un documento con tu información ha sido generado y enviado al departamento de becas. Un asesor te contactará para aplicar tu descuento.</p>
+                <button onclick="document.getElementById('becaModal').style.display='none';" class="btn-accent" style="margin-top: 1rem; border:none; padding: 0.5rem 1.5rem; cursor:pointer;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function submitBeca() {
+            const btn = document.getElementById('btnBecaSubmit');
+            btn.innerText = "Evaluando y generando documento...";
+            btn.disabled = true;
+
+            const nombre = document.getElementById('beca-nombre').value;
+            const telefono = document.getElementById('beca-telefono').value;
+            const ingreso = document.getElementById('beca-ingreso').value;
+            const gastos = document.getElementById('beca-gastos').value;
+            const trabajo = document.getElementById('beca-trabajo').value;
+            const dependientes = document.getElementById('beca-dependientes').value;
+            const vivienda = document.getElementById('beca-vivienda').value;
+            const motivo = document.getElementById('beca-motivo').value;
+            
+            // Calculo interno
+            let porcentaje = 20; 
+            if (ingreso.includes('Menos de $6,000')) porcentaje += 20;
+            else if (ingreso.includes('$6,000 - $12,000')) porcentaje += 10;
+            
+            if (vivienda.includes('Rentada') || vivienda.includes('Prestada')) porcentaje += 10;
+            if (trabajo.includes('Desempleado')) porcentaje += 5;
+            
+            if (porcentaje > 50) porcentaje = 50;
+            
+            const payload = {
+                action: "generar_documento_beca",
+                data: {
+                    nombre: nombre,
+                    telefono: telefono,
+                    ingreso: ingreso,
+                    gastos: gastos,
+                    trabajo: trabajo,
+                    dependientes: dependientes,
+                    vivienda: vivienda,
+                    motivo: motivo,
+                    porcentaje: porcentaje
+                }
+            };
+
+            // Llamada al backend GLOBAL_BACKEND_URL (Apps Script)
+            fetch(GLOBAL_BACKEND_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                document.getElementById('becaForm').style.display = 'none';
+                document.getElementById('becaResult').style.display = 'block';
+                document.getElementById('becaMessage').innerText = "Has obtenido una beca del " + porcentaje + "% en tus colegiaturas.";
+            }).catch(e => {
+                alert("Ocurrió un error de red. Inténtalo de nuevo.");
+                btn.innerText = "Enviar Solicitud y Evaluar";
+                btn.disabled = false;
+            });
+        }
+    </script>
+
+
+    <!-- RVOE Warning Modal -->
+    <div id="rvoeWarningModal" style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center;">
+        <div class="card glass" style="width: 90%; max-width: 500px; padding: 2rem; position: relative; text-align:center;">
+            <h3 style="color: var(--unifreire-yellow); margin-bottom: 1rem;">Aviso de redirección</h3>
+            <p style="color: white; font-size: 1.1rem; line-height: 1.5;">Estas por salir de la web de Unifreire para dirigirte al registro oficial RVOES de la SEP, busca nuestro rvoes en la pagina 228 y 232.</p>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                <button onclick="document.getElementById('rvoeWarningModal').style.display='none';" class="btn-accent" style="padding: 0.8rem 1.5rem; border: none; cursor: pointer;">Cancelar</button>
+                <a href="https://dgair.sep.gob.mx/storage/recursos/DREOE/inst_fed_vig_I_J.pdf" target="_blank" onclick="document.getElementById('rvoeWarningModal').style.display='none';" class="btn-primary" style="padding: 0.8rem 1.5rem; border: none; cursor: pointer; text-decoration: none;">Continuar</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showRvoeSearchBtn(selectElem) {
+            document.querySelectorAll('.rvoe-select').forEach(sel => {
+                if (sel !== selectElem) sel.value = "";
+            });
+            const btn = document.getElementById('btn-buscar-rvoe');
+            if (selectElem.value !== "") {
+                btn.style.display = 'block';
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+        function openRvoeWarning() {
+            document.getElementById('rvoeWarningModal').style.display = 'flex';
+        }
+    </script>
+
+</body>
+</html>

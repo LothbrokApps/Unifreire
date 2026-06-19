@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFB81C">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unifreire - ¡Tu puedes ser un Jaguar!</title>
+    <link rel="icon" href="assets/images/logo.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 6rem auto 4rem auto;
+            padding: 3rem 5%;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .test-header h1 {
+            color: var(--unifreire-yellow);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .question {
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.5s ease;
+        }
+
+        .question h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--unifreire-green-light);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option-label {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+        }
+
+        .option-label:hover {
+            background: rgba(255, 184, 28, 0.1);
+            border-color: var(--unifreire-yellow);
+        }
+
+        .option-label input {
+            margin-right: 1rem;
+            accent-color: var(--unifreire-yellow);
+            transform: scale(1.2);
+        }
+
+        .result-box {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            border: 1px solid var(--unifreire-yellow);
+            border-radius: 12px;
+            background: rgba(0, 77, 54, 0.2);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .result-box h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-box .career-match {
+            font-size: 1.5rem;
+            color: var(--unifreire-yellow);
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar glass" style="padding: 1rem 5%;">
+        <a href="index.html" class="brand" style="text-decoration: none;"><img loading="lazy" src="assets/images/logo.png" alt="Unifreire" style="height: 40px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));"></a>
+        <button class="hamburger" id="hamburger-menu" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="index.html" style="text-decoration:none; color:white; font-weight:500;">Inicio</a>
+            <a href="index.html#carreras" style="text-decoration:none; color:white; font-weight:500;">Carreras</a>
+            <a href="index.html#experiencia-jaguar" style="text-decoration:none; color:white; font-weight:500;">Experiencia Jaguar</a>
+            <a href="vocational.html" style="text-decoration:none; color:white; font-weight:500;">Test Vocacional</a>
+            <a href="https://wa.me/message/VP27JTT7ZB55G1" target="_blank" style="display: flex; align-items: center; gap: 0.3rem; text-decoration: none; color: #25D366; font-weight: 600;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg> WhatsApp
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="test-container glass" id="quiz-container">
+        
+        <div class="test-header">
+            <h1>Descubre tu Verdadera Vocación</h1>
+            <p>Responde estas 8 preguntas y te sugeriremos la carrera ideal para tu perfil en Unifreire.</p>
+        </div>
+
+        <form id="vocational-form">
+            <div id="dynamic-questions"></div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <button type="button" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="calculateResult()">VER MIS RESULTADOS</button>
+            </div>
+        </form>
+
+        <div id="result-box" class="result-box">
+
+            <h2>Tu Perfil Ideal:</h2>
+            <div id="match-career" class="career-match">Cargando perfil...</div>
+            <p style="margin-bottom: 2rem;">Basado en tus respuestas, este es el programa académico que mejor se adapta a tus habilidades e intereses.</p>
+            <button class="btn-accent" onclick="goToCareer()">VER DETALLES DE LA CARRERA</button>
+        </div>
+    </div>
+    
+    
+    <script src="data.js"></script>
+    <script>
+        let recommendedId = '';
+
+        const QUESTION_BANK = [
+    { text: "Al enfrentarte a un problema que carece de una solución clara, ¿cuál es tu aproximación inicial?", a: "Abstraer los componentes del problema para formular un modelo predictivo (A)", b: "Evaluar el impacto estructural y los recursos necesarios para viabilizar una respuesta (B)", c: "Consultar precedentes normativos y establecer un marco de actuación justo (C)", d: "Analizar las motivaciones ocultas de los actores involucrados (D)", e: "Bocetar mapas mentales visuales para encontrar armonía en el caos (E)" },
+    { text: "En un escenario de alta incertidumbre y estrés, ¿dónde encuentras anclaje cognitivo?", a: "En la precisión inmutable de las leyes físicas y algoritmos (A)", b: "En la capacidad de reestructurar la cadena de mando y el capital (B)", c: "En el imperio de la ley, la ética colectiva y el deber ser (C)", d: "En el estudio profundo de la conducta atípica y sus detonantes (D)", e: "En la proporción, la simetría y el rediseño del entorno físico (E)" },
+    { text: "Si tuvieras que descifrar un lenguaje extraterrestre, ¿por dónde empezarías?", a: "Buscando patrones matemáticos, binarios o señales algorítmicas (A)", b: "Estableciendo un sistema de intercambio de valor o negociación (B)", c: "Analizando sus reglas de convivencia y jerarquías de autoridad (C)", d: "Observando sus reacciones primarias ante el miedo o la empatía (D)", e: "Interpretando sus representaciones gráficas y su arquitectura espacial (E)" },
+    { text: "Frente a un avance tecnológico disruptivo (ej. IA avanzada), ¿cuál es tu principal inquietud?", a: "Cómo optimizar su código para interconectar sistemas autónomos (A)", b: "De qué forma alterará las dinámicas del mercado global (B)", c: "Los vacíos legales que podrían vulnerar los derechos humanos (C)", d: "El impacto psicológico y el potencial incremento de sociopatías (D)", e: "Cómo rediseñará los espacios en los que habitamos e interactuamos (E)" },
+    { text: "Selecciona el concepto que te resulta más fascinante explorar:", a: "Termodinámica y redes neuronales artificiales (A)", b: "Macroeconomía y teoría de juegos aplicados a negocios (B)", c: "Filosofía moral y dogmática jurídica (C)", d: "Perfilación criminal y neurobiología del trauma (D)", e: "Urbanismo táctico y diseño bioclimático (E)" },
+    { text: "¿Qué habilidad consideras más crítica para el futuro de la humanidad?", a: "La capacidad de automatizar y perfeccionar sistemas mecánicos (A)", b: "La administración eficiente de recursos en un mundo de escasez (B)", c: "La construcción de marcos legales universales inquebrantables (C)", d: "La decodificación clínica de las motivaciones humanas destructivas (D)", e: "La edificación de entornos sostenibles que eleven el espíritu humano (E)" },
+    { text: "Cuando observas una metrópolis desde el aire, ¿qué es lo primero que procesa tu mente?", a: "El flujo de la red eléctrica, telecomunicaciones y transporte (A)", b: "Los centros financieros, el PIB generado y el comercio (B)", c: "La desigualdad social y las leyes de zonificación que la permiten (C)", d: "La tensión invisible y las zonas de alta incidencia delictiva (D)", e: "La morfología de los edificios y la integración con la naturaleza (E)" },
+    { text: "Si escribieras un libro revolucionario, ¿sobre qué trataría?", a: "Un nuevo paradigma en la integración humano-máquina (A)", b: "Principios disruptivos para la gestión del talento y el capital (B)", c: "Una reescritura de los derechos fundamentales en la era digital (C)", d: "La anatomía de las mentes sociópatas en la historia (D)", e: "El impacto de la geometría espacial en la emoción humana (E)" },
+    { text: "¿Cuál es tu respuesta instintiva ante el fracaso sistemático de un proyecto?", a: "Desarmar el sistema entero para aislar la variable defectuosa (A)", b: "Reestructurar el presupuesto, pivotar la idea y motivar al equipo (B)", c: "Auditar los procesos para encontrar incumplimientos normativos (C)", d: "Entrevistar a los involucrados para detectar sabotajes inconscientes (D)", e: "Desechar el plano original y buscar una nueva perspectiva estética (E)" },
+    { text: "¿Qué enigma histórico despierta más tu curiosidad analítica?", a: "Los mecanismos y matemáticas detrás de la Máquina de Anticitera (A)", b: "Las estrategias comerciales que sostuvieron al Imperio Romano (B)", c: "Los juicios y la creación de los primeros códigos civiles (C)", d: "Los motivos psicológicos no resueltos de figuras históricas polémicas (D)", e: "Las técnicas de ingeniería y proporción de las pirámides (E)" },
+    { text: "¿Cómo sueles persuadir a otros de que tienes la razón?", a: "Mostrando datos cuantitativos, métricas y pruebas empíricas (A)", b: "Evidenciando el beneficio mutuo, el ROI o el valor estratégico (B)", c: "Argumentando con lógica deductiva, ética y precedentes (C)", d: "Apelando a sus sesgos cognitivos tras leer su lenguaje corporal (D)", e: "Presentando un prototipo visual o un esquema que hable por sí solo (E)" },
+    { text: "De los siguientes perfiles documentales, ¿cuál verías de principio a fin?", a: "La ingeniería detrás de los robots exploradores de Marte (A)", b: "El ascenso y caída de gigantes corporativos de Wall Street (B)", c: "Grandes batallas legales que cambiaron la constitución (C)", d: "El análisis forense de casos sin resolver y mentes criminales (D)", e: "Las megaestructuras y la mente de grandes diseñadores (E)" },
+    { text: "¿Qué te causa mayor satisfacción intelectual?", a: "Lograr que múltiples sistemas complejos funcionen en sincronía (A)", b: "Proyectar una visión, ejecutarla y ver cómo se multiplica el valor (B)", c: "Defender una postura justa frente a una mayoría equivocada (C)", d: "Encontrar la pieza clave que revela por qué alguien mintió (D)", e: "Transformar un espacio vacío en algo funcional y asombroso (E)" },
+    { text: "Si te enfrentas a un rompecabezas abstracto, ¿cómo lo abordas?", a: "Calculo permutaciones y algoritmos para resolverlo rápido (A)", b: "Delego partes a quienes considero más hábiles en ciertos patrones (B)", c: "Establezco reglas inamovibles sobre cómo mover las piezas (C)", d: "Trato de entender la mente del creador del rompecabezas (D)", e: "Agrupo las piezas por simetría, color y forma estructural (E)" },
+    { text: "¿Cuál de estos roles asumirías en una expedición a terreno desconocido?", a: "Operador de tecnología, drones y telemetría (A)", b: "Director logístico y gestor de raciones (B)", c: "Mediador de conflictos y encargado de las reglas éticas (C)", d: "Analista de riesgos conductuales ante el aislamiento (D)", e: "Cartógrafo y creador de refugios eficientes (E)" },
+    { text: "En tu opinión, ¿qué es la 'Verdad'?", a: "Un valor absoluto que puede probarse matemáticamente (A)", b: "Un consenso pragmático que permite la operatividad (B)", c: "La correcta interpretación de los hechos bajo un marco ético (C)", d: "Una construcción subjetiva que oculta los verdaderos motivos (D)", e: "La armonía entre la forma y la función (E)" },
+    { text: "¿Qué tipo de error toleras menos en tu entorno?", a: "La inexactitud técnica o la falla de un sistema probado (A)", b: "La ineficiencia o el desperdicio de tiempo y capital (B)", c: "La injusticia flagrante y la corrupción de las normas (C)", d: "La hipocresía y la falta de empatía en situaciones críticas (D)", e: "El desorden estético y la falta de planificación espacial (E)" },
+    { text: "Cuando juegas juegos de estrategia complejos (ej. ajedrez o de mesa), tu estilo es:", a: "Calcular múltiples movimientos adelantados con precisión lógica (A)", b: "Manejar los recursos del juego para asfixiar las opciones del rival (B)", c: "Apegarte estrictamente a las reglas y penalizar quien se desvíe (C)", d: "Hacer jugadas psicológicas para poner nervioso al oponente (D)", e: "Construir una defensa sólida, simétrica e impenetrable (E)" },
+    { text: "¿Cómo conceptualizas el 'Poder'?", a: "Como la capacidad de dominar la energía y la información (A)", b: "Como la influencia económica y organizacional sobre las masas (B)", c: "Como la autoridad legítima derivada de las leyes (C)", d: "Como la habilidad de manipular y predecir el comportamiento (D)", e: "Como la capacidad de alterar el entorno para impactar la psique (E)" },
+    { text: "De las siguientes herramientas de software, ¿cuál te resulta más intrigante?", a: "Lenguajes de programación e IDEs complejos (A)", b: "Sistemas ERP, CRMs y analítica de negocios (B)", c: "Bases de datos de jurisprudencia y contratos inteligentes (C)", d: "Software forense, perfilamiento biométrico o análisis de voz (D)", e: "Programas de renderizado 3D, CAD o modelado paramétrico (E)" },
+    { text: "¿Qué elemento es fundamental para una civilización avanzada?", a: "La automatización y la inteligencia artificial general (A)", b: "Un sistema económico libre y mercados eficientes (B)", c: "Un sistema de justicia imparcial, ciego y equitativo (C)", d: "Una profunda comprensión de la salud mental colectiva (D)", e: "Infraestructuras que soporten la vida de manera sostenible (E)" },
+    { text: "¿Qué harías si descubres un patrón inusual en unos datos?", a: "Escribo un script para aislar la anomalía y comprobar su origen (A)", b: "Analizo si ese patrón representa una oportunidad de mercado (B)", c: "Reviso si el patrón evidencia una vulneración legal (C)", d: "Investigo quién alteró los datos y con qué motivación oscura (D)", e: "Visualizo el patrón gráficamente para entender su geometría (E)" },
+    { text: "Frente a un dilema moral complejo, tu decisión se basa en:", a: "La solución más lógica que optimice el resultado global (A)", b: "La opción que garantice la supervivencia de la organización (B)", c: "El estricto apego a la norma, cueste lo que cueste (C)", d: "Entender el trauma y el contexto del individuo afectado (D)", e: "Buscar una tercera vía lateral, creativa y poco convencional (E)" },
+    { text: "Si tuvieras que enseñar una materia universitaria, ¿cuál elegirías?", a: "Sistemas Dinámicos y Robótica Avanzada (A)", b: "Desarrollo Organizacional y Finanzas Corporativas (B)", c: "Derecho Constitucional y Retórica Política (C)", d: "Psicología Forense y Perfilación Criminológica (D)", e: "Diseño Estructural e Historia de la Arquitectura (E)" },
+    { text: "Tu concepto del 'Orden' se define como:", a: "Algoritmos ejecutándose sin redundancias ni errores (A)", b: "Procesos estandarizados maximizando el rendimiento (B)", c: "El cumplimiento universal de los acuerdos pactados (C)", d: "La ausencia de impulsos destructivos incontrolables (D)", e: "El balance perfecto entre volúmenes, luces y texturas (E)" },
+    { text: "Imagina que puedes viajar en el tiempo, ¿qué evento te interesaría atestiguar?", a: "El momento en que se inventó el primer ordenador cuántico (A)", b: "La creación de la primera bolsa de valores moderna (B)", c: "La firma de los primeros derechos fundamentales del ser humano (C)", d: "El interrogatorio original a un genio criminal histórico (D)", e: "La construcción y diseño de los jardines colgantes de Babilonia (E)" },
+    { text: "¿Qué tipo de lenguaje prefieres utilizar en tu día a día?", a: "Técnico, preciso, matemático e inequívoco (A)", b: "Ejecutivo, directo, enfocado en resultados (B)", c: "Formal, persuasivo, fundamentado en reglas (C)", d: "Observacional, cauteloso, leyendo entre líneas (D)", e: "Descriptivo, visual, utilizando analogías espaciales (E)" },
+    { text: "En un debate sobre el destino del ser humano, tu postura es:", a: "La tecnología nos llevará a la singularidad (A)", b: "La economía globalizada unificará nuestras necesidades (B)", c: "Solo un contrato social sólido evitará el colapso (C)", d: "Nuestra naturaleza tribal y psicológica nunca cambiará (D)", e: "Adaptaremos nuestro hábitat físico para sobrevivir (E)" },
+    { text: "Si fueras un detective, tu mayor fortaleza sería:", a: "Hackear sistemas para recolectar evidencia digital (A)", b: "Rastrear las transacciones financieras oscuras (B)", c: "Encontrar la fisura legal en las coartadas (C)", d: "Leer las microexpresiones durante un interrogatorio (D)", e: "Reconstruir mentalmente la escena en 3D (E)" },
+    { text: "El concepto de 'belleza' para ti reside en:", a: "La elegancia de una ecuación matemática perfecta (A)", b: "El crecimiento compuesto de un sistema escalable (B)", c: "La elocuencia de un alegato perfectamente estructurado (C)", d: "La complejidad incomprensible de la mente humana (D)", e: "La armonía de los elementos tangibles en un espacio (E)" },
+    { text: "¿Qué noticia mundial captaría inmediatamente tu atención?", a: "Un nuevo avance en nanotecnología automatizada (A)", b: "Una fusión de megacorporaciones alterando el mercado (B)", c: "Una corte internacional fallando sobre un caso sin precedentes (C)", d: "La revelación psicológica detrás de un ataque masivo (D)", e: "La inauguración de una ciudad totalmente inteligente y flotante (E)" },
+    { text: "¿Cómo consideras la intuición en la toma de decisiones?", a: "Un sesgo cognitivo que debe ser corregido con datos (A)", b: "Una herramienta útil, pero subordinada al análisis de riesgo (B)", c: "Peligrosa, ya que las decisiones deben basarse en evidencias y ley (C)", d: "El sexto sentido crítico para detectar mentiras y peligros (D)", e: "La fuente principal de la genialidad creativa y el diseño (E)" },
+    { text: "¿A qué dedicas más tiempo analizando inconscientemente?", a: "A cómo están construidos y programados los dispositivos que uso (A)", b: "A los modelos de negocio de los lugares que visito (B)", c: "A las injusticias diarias que la sociedad normaliza (C)", d: "A las interacciones sociales y por qué la gente reacciona así (D)", e: "A la iluminación, texturas y ergonomía de las habitaciones (E)" },
+    { text: "Para ti, el 'caos' se combate con:", a: "Optimización matemática y control de variables (A)", b: "Liderazgo firme, delegación y reasignación de presupuestos (B)", c: "El establecimiento de nuevas leyes y su aplicación rigurosa (C)", d: "Intervención psicológica y análisis de contención (D)", e: "Rediseño ambiental para forzar un nuevo comportamiento (E)" },
+    { text: "¿Cuál sería tu epitafio ideal?", a: "Descodificó los secretos de la materia y el código (A)", b: "Lideró con visión, transformando el valor en legado (B)", c: "Defendió la verdad y la justicia inquebrantablemente (C)", d: "Comprendió el abismo de la mente humana (D)", e: "Diseñó el mundo para que fuera un lugar mejor (E)" }
+];
+
+        let selectedQuestions = [];
+
+        function shuffle(array) {
+            let currentIndex = array.length,  randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pick 8 random questions
+            const shuffledBank = shuffle([...QUESTION_BANK]);
+            selectedQuestions = shuffledBank.slice(0, 8);
+            
+            const formContainer = document.getElementById('dynamic-questions');
+            let html = '';
+
+            selectedQuestions.forEach((q, idx) => {
+                // Shuffle options
+                const opts = [
+                    {val: 'A', text: q.a},
+                    {val: 'B', text: q.b},
+                    {val: 'C', text: q.c},
+                    {val: 'D', text: q.d},
+                    {val: 'E', text: q.e}
+                ];
+                const shuffledOpts = shuffle(opts);
+
+                let optsHtml = '';
+                shuffledOpts.forEach(o => {
+                    optsHtml += `<label class="option-label"><input type="radio" name="q${idx}" value="${o.val}"> ${o.text}</label>`;
+                });
+
+                html += `
+                <div class="question">
+                    <h3>${idx + 1}. ${q.text}</h3>
+                    <div class="options">
+                        ${optsHtml}
+                    </div>
+                </div>`;
+            });
+            formContainer.innerHTML = html;
+        });
+
+        function calculateResult() {
+            const form = document.forms['vocational-form'];
+            let scores = { A:0, B:0, C:0, D:0, E:0 };
+            
+            for(let i=0; i<8; i++) {
+                const val = form['q'+i].value;
+                if(!val) {
+                    alert("Por favor, responde todas las preguntas (te faltan algunas).");
+                    return;
+                }
+                scores[val]++;
+            }
+
+            let maxScore = 0;
+            let winner = '';
+            for (let s in scores) {
+                if (scores[s] > maxScore) {
+                    maxScore = scores[s];
+                    winner = s;
+                }
+            }
+
+            const maps = {
+                'A': "ing-mecatronica",
+                'B': "lic-administracion",
+                'C': "lic-derecho",
+                'D': "lic-criminologia",
+                'E': "lic-arquitectura"
+            };
+
+            recommendedId = maps[winner];
+            document.getElementById('vocational-form').style.display = 'none';
+            document.getElementById('result-box').style.display = 'block';
+            document.getElementById('match-career').innerText = CAREERS_DATA[recommendedId].name;
+        }
+
+        function goToCareer() {
+            localStorage.setItem("carreraSeleccionada", recommendedId);
+            window.location.href = "career.html";
+        }
+    </script>
+
+    
+    
+    <!-- Floating Draggable Social Menu -->
+    <div id="social-container" style="position: fixed; bottom: 30px; left: 30px; z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;">
+        <div id="social-menu" style="display: none; flex-direction: column; gap: 0.8rem; background: rgba(0,0,0,0.85); padding: 0.8rem; border-radius: 40px; border: 1px solid var(--unifreire-yellow); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            <a href="https://www.facebook.com/InstitutoUniversitarioPauloFreire" target="_blank" style="pointer-events: auto; width: 50px; height: 50px; border-radius: 50%; background: #1877F2; display: flex; align-items: center; justify-content: center; color: white; transition: transform 0.2s;" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/unifreireoficial" target="_blank" style="pointer-events: auto; width: 50px; height: 50px; border-radius: 50%; background: #D2042D; display: flex; align-items: center; justify-content: center; color: white; transition: transform 0.2s;" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@unifreire" target="_blank" style="pointer-events: auto; width: 50px; height: 50px; border-radius: 50%; background: #28282B; display: flex; align-items: center; justify-content: center; color: white; transition: transform 0.2s;" onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.21-3.65-5.54-.2-2.33.8-4.7 2.51-6.16 1.74-1.48 4.12-2.02 6.32-1.45.02 1.48.01 2.96.01 4.44-1.3-.29-2.73-.25-3.95.27-1.16.48-2.08 1.48-2.39 2.7-.35 1.41.01 2.98 1.05 3.95 1.14 1.02 2.82 1.19 4.16.51 1.19-.6 1.88-1.89 1.95-3.25.13-3.68.04-7.38.07-11.06.01-2.45-.03-4.9.04-7.34z"/></svg>
+            </a>
+        </div>
+        <div id="social-fab" style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--unifreire-yellow), #d49813); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s;">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </div>
+    </div>
+
+
+
+    <!-- Footer -->
+    <footer style="background: rgba(0,0,0,0.9); border-top: 1px solid rgba(255,184,28,0.3); padding: 4rem 5%; color: white; margin-top: auto;">
+        <h3 style="color: var(--unifreire-yellow); margin-bottom: 2rem; font-size: 1.5rem; text-align: center;">Nuestros Planteles</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Centro</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 José María Arteaga 240<br>Zona Centro, Saltillo, Coah.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (844) 410-5762</p>
+                <a href="https://maps.app.goo.gl/tbLyqT6qCdnmW3in6" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Matamoros</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 Mariano Matamoros 766<br>Zona Centro, Saltillo, Coah.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (844) 726-0527</p>
+                <a href="https://maps.app.goo.gl/L3NqmizFhWFZWsFw9" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Sur</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 Calle 2 #2648, esq. Blvd. Hidalgo<br>Fracc. Miguel Hidalgo, Saltillo, Coah.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (844) 112-4654</p>
+                <a href="https://maps.app.goo.gl/v49aGjP2VZUDNmpSA" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="color: white; margin-bottom: 1rem;">Plantel Monterrey</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">📍 Albino Espinosa Ote 324<br>entre Galeana y E. Carranza, N.L.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">📲 (81) 163-70651</p>
+                <a href="https://maps.app.goo.gl/fEiJBCyAh1eWbuLt7" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
+            </div>
+        </div>
+        <p style="text-align: center; color: #666; margin-top: 3rem; font-size: 0.8rem;">&copy; 2026 UNIFREIRE. Todos los derechos reservados.</p>
+    </footer>
+
+        <!-- Security & Dynamic Social Script -->
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.code === "F12" || e.keyCode === 123) return false;
+            if(e.ctrlKey && e.shiftKey && (e.code === "KeyI" || e.code === "KeyJ" || e.code === "KeyC")) return false;
+            if(e.ctrlKey && e.code === "KeyU") return false;
+        };
+        const fab = document.getElementById('social-fab');
+        const menu = document.getElementById('social-menu');
+        if (fab && menu) {
+            fab.addEventListener('click', () => {
+                menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+            });
+        }
+    </script>
+
+    <script>
+        // Global Secret Admin Access
+        (function() {
+            let secretCode = "";
+            document.addEventListener("keydown", (e) => {
+                if (e.key) {
+                    secretCode += e.key.toLowerCase();
+                    if(secretCode.includes("mkt")) {
+                        window.location.href = "admin.html";
+                    }
+                    if(secretCode.length > 20) secretCode = secretCode.slice(-20);
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFB81C">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unifreire - ¡Tu puedes ser un Jaguar!</title>
+    <link rel="icon" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 8rem 5% 4rem 5%;
+            min-height: 100vh;
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: var(--unifreire-yellow);
+            font-size: 2rem;
+        }
+        .smart-form {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            color: var(--unifreire-green-light);
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--unifreire-yellow);
+        }
+        .form-group select option {
+            background: var(--bg-dark);
+            color: white;
+        }
+        .success-msg {
+            display: none;
+            background: rgba(37, 211, 102, 0.2);
+            border: 1px solid #25D366;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar glass" style="padding: 1rem 5%;">
+        <a href="index.html" class="brand" style="text-decoration: none;"><img loading="lazy" src="assets/images/logo.png" alt="Unifreire" style="height: 40px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));"></a>
+        <button class="hamburger" id="hamburger-menu" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
+            <a href="index.html" style="text-decoration:none; color:white; font-weight:500;">Inicio</a>
+            <a href="index.html#carreras" style="text-decoration:none; color:white; font-weight:500;">Carreras</a>
+            <a href="index.html#experiencia-jaguar" style="text-decoration:none; color:white; font-weight:500;">Experiencia Jaguar</a>
+            <a href="vocational.html" style="text-decoration:none; color:white; font-weight:500;">Test Vocacional</a>
+            <a href="https://wa.me/message/VP27JTT7ZB55G1" target="_blank" style="display: flex; align-items: center; gap: 0.3rem; text-decoration: none; color: #25D366; font-weight: 600;">
+                WhatsApp
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Inicia tu Solicitud</h1>
+            <p style="color: var(--text-secondary);">Completa este formulario inteligente y rápido. Un asesor te contactará a la brevedad.</p>
+        </div>
+
+        <form class="smart-form" id="admission-form">
+            <div class="form-group">
+                <label for="f-nombre">Nombre Completo</label>
+                <input type="text" id="f-nombre" required placeholder="Ej. Juan Pérez">
+            </div>
+            <div class="form-group">
+                <label for="f-carrera">Carrera de Interés</label>
+                <input type="text" id="f-carrera" required readonly style="color: var(--unifreire-yellow); font-weight: bold; background: rgba(0,0,0,0.5);">
+            </div>
+            <div class="form-group">
+                <label for="f-telefono">Teléfono / WhatsApp</label>
+                <input type="tel" id="f-telefono" required placeholder="Ej. 844 123 4567">
+            </div>
+            <div class="form-group">
+                <label for="f-email">Correo Electrónico</label>
+                <input type="email" id="f-email" required placeholder="correo@ejemplo.com">
+            </div>
+            <div class="form-group">
+                <label for="f-modalidad">Modalidad y Horario de Interés</label>
+                <select id="f-modalidad" required>
+                    <option value="" disabled selected>Selecciona un horario...</option>
+                    <option value="Matutino (L-V 7am - 10am Saltillo / 8am - 11am MTY)">Matutino (L-V 7am-10am / 8am-11am)</option>
+                    <option value="Intermedio (L-V 10:30am - 1:30pm Saltillo)">Intermedio (L-V 10:30am - 1:30pm)</option>
+                    <option value="Vespertino (L-V 6pm - 9pm Saltillo)">Vespertino (L-V 6pm - 9pm)</option>
+                    <option value="Turno Mixto (Sábado o Domingo 8am - 3pm)">Turno Mixto (Sábado o Domingo 8am - 3pm)</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-top: 1rem;">
+                <button type="submit" class="btn-accent" style="width: 100%; font-size: 1.2rem;">ENVIAR SOLICITUD</button>
+            </div>
+            <div id="success-message" class="success-msg">
+                ¡Solicitud enviada con éxito! Redirigiendo...
+            </div>
+        </form>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const careerId = localStorage.getItem('carreraSeleccionada');
+            let careerName = "Carrera no seleccionada";
+            if(careerId && CAREERS_DATA[careerId]) {
+                careerName = CAREERS_DATA[careerId].name;
+            }
+            document.getElementById('f-carrera').value = careerName;
+        });
+
+        document.getElementById('admission-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerText = "Enviando...";
+            btn.disabled = true;
+
+            const formAnswers = {
+                nombre: document.getElementById('f-nombre').value,
+                carrera: document.getElementById('f-carrera').value,
+                telefono: document.getElementById('f-telefono').value,
+                email: document.getElementById('f-email').value,
+                horario: document.getElementById('f-modalidad').value,
+                fecha: new Date().toISOString()
+            };
+
+            let leads = JSON.parse(localStorage.getItem('unifreire_leads') || '[]');
+            leads.push(formAnswers);
+            localStorage.setItem('unifreire_leads', JSON.stringify(leads));
+
+            const urlGoogleAppsScript = GLOBAL_BACKEND_URL;
+            const formParams = new URLSearchParams({
+                action: "registro",
+                nombre: formAnswers.nombre,
+                correo: formAnswers.email,
+                telefono: formAnswers.telefono,
+                interes: formAnswers.carrera,
+                tipo: formAnswers.horario
+            });
+
+            fetch(urlGoogleAppsScript, {
+                method: "POST",
+                body: formParams,
+                mode: "no-cors"
+            }).finally(() => {
+                document.getElementById('success-message').style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = "index.html"; 
+                }, 3000);
+            });
+        });
+    </script>
+    <!-- Security & Dynamic Social Script -->
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.code === "F12" || e.keyCode === 123) return false;
+            if(e.ctrlKey && e.shiftKey && (e.code === "KeyI" || e.code === "KeyJ" || e.code === "KeyC")) return false;
+            if(e.ctrlKey && e.code === "KeyU") return false;
+        };
+        const fab = document.getElementById('social-fab');
+        const menu = document.getElementById('social-menu');
+        if (fab && menu) {
+            fab.addEventListener('click', () => {
+                menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
+            });
+        }
+    </script>
+
+    <script>
+        // Global Secret Admin Access
+        (function() {
+            let secretCode = "";
+            document.addEventListener("keydown", (e) => {
+                if (e.key) {
+                    secretCode += e.key.toLowerCase();
+                    if(secretCode.includes("mkt")) {
+                        window.location.href = "admin.html";
+                    }
+                    if(secretCode.length > 20) secretCode = secretCode.slice(-20);
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>

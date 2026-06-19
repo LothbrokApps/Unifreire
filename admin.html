@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFB81C">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unifreire - ¡Tu puedes ser un Jaguar!</title>
+    <link rel="icon" href="assets/images/logo.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.8);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .sidebar-brand {
+            color: var(--unifreire-yellow);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 184, 28, 0.1);
+            color: var(--unifreire-yellow);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 3rem;
+            width: calc(100% - 250px);
+        }
+
+        .header-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--glass-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            background: rgba(0, 77, 54, 0.6);
+            color: var(--unifreire-yellow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Password Overlay */
+        #password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .password-box {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .password-box input {
+            width: 100%;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--unifreire-yellow);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+        }
+
+        /* Drag and Drop Zone */
+        .drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            position: relative;
+            background: rgba(0,0,0,0.2);
+        }
+        .drop-zone:hover {
+            background: rgba(255, 184, 28, 0.05);
+            border-color: rgba(255, 184, 28, 0.5);
+        }
+        .drop-zone.dragover {
+            border-color: var(--unifreire-yellow);
+            background: rgba(255, 184, 28, 0.1);
+        }
+    </style>
+
+</head>
+<body style="background-color: #0a0a0a;">
+    
+    <div id="password-overlay">
+        <div class="password-box">
+            <img loading="lazy" src="assets/images/logo.png" style="height: 60px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5)); margin-bottom: 1rem;">
+            <h3>Acceso Administrativo</h3>
+            <input type="password" id="admin-pass" placeholder="Contraseña">
+            <button class="btn-primary" onclick="checkAdminPassword()" style="width: 100%;">Ingresar</button>
+            <p id="pass-error" style="color: #ff4d4d; margin-top: 1rem; display: none;">Contraseña incorrecta</p>
+            <a href="index.html" style="color: var(--text-secondary); display: block; margin-top: 2rem; text-decoration: none;">← Volver al sitio</a>
+        </div>
+    </div>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand" style="margin-bottom: 2rem;">
+                <img loading="lazy" src="assets/images/logo.png" style="height: 40px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));">
+            </div>
+            <a class="nav-item active" onclick="switchTab('leads')">Ver Leads</a>
+            <a class="nav-item" onclick="switchTab('carreras')">Gestión de Carreras</a>
+            <a class="nav-item" onclick="switchTab('marketing')">Campañas y Banners</a>
+
+            <a class="nav-item" onclick="switchTab('carrusel')">Control Carrusel</a>
+            <a class="nav-item" href="index.html" style="margin-top: auto; position: absolute; bottom: 20px; width: 200px;">← Volver a la Web</a>
+        </aside>
+
+        <main class="main-content">
+            
+            <!-- LEADS TAB -->
+            <div id="leads" class="tab-content active">
+                <div class="header-action">
+                    <h2>Leads de Admisión</h2>
+                    <button class="btn-accent" onclick="exportExcel()">Exportar a Excel</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Carrera de Interés</th>
+                            <th>Teléfono</th>
+                            <th>Nivel</th>
+                            <th>Creación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-body">
+                        <!-- Loaded by admin.js -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CARRERAS TAB -->
+            <div id="carreras" class="tab-content">
+                <div class="header-action">
+                    <h2>Gestión de Carreras (Planes de estudio)</h2>
+                    <button class="btn-primary" onclick="alert('Funcionalidad de base de datos no conectada en este mock')">+ Subir Nueva Carrera</button>
+                </div>
+                <div class="grid-container" style="padding: 0; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr))" id="admin-careers-grid">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+
+            <!-- MARKETING TAB -->
+            <div id="marketing" class="tab-content">
+                <div class="header-action">
+                    <h2>Campañas y Banners</h2>
+                    <button class="btn-accent">Activar Campaña</button>
+                </div>
+                
+                <div class="card glass" style="margin-bottom: 2rem;">
+                    <h3>Banner Principal (Hero)</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Actualiza la fotografía de la pantalla principal (Pega el enlace directo de Google Drive).</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <input type="text" id="hero-url-input" placeholder="Ej. https://drive.google.com/uc?export=view&id=1XyZabc..." style="flex-grow: 1; min-width: 250px; padding: 0.8rem; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-dark); color: white;">
+                        <button class="btn-primary" onclick="updateHeroBanner()">Guardar Enlace</button>
+                    </div>
+                    <p id="hero-banner-msg" style="color: var(--unifreire-yellow); margin-top: 1rem;"></p>
+                </div>
+                
+                <h3 style="color: var(--unifreire-yellow); margin-bottom: 1.5rem; margin-top: 2rem;">Banners de Carreras Individuales</h3>
+                <div class="grid-container" style="padding: 0; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))" id="admin-campanas-banners-grid"></div>
+            </div>
+
+
+
+            <!-- CARRUSEL TAB -->
+            <div id="carrusel" class="tab-content">
+                <div class="header-action">
+                    <h2>Control de Carrusel (Experiencia Jaguar)</h2>
+                    <p style="color: var(--text-secondary); max-width: 600px;">Las imágenes de tu carrusel se administran desde tu nube de Google Drive para no saturar la memoria web y agilizar la carga.</p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3 style="color: white; margin-bottom: 1rem;">1. Sube tu imagen a la Nube</h3>
+                    <a href="https://drive.google.com/drive/folders/12XY5ckRVHqCrPhuChMljFoUFiRuOWa6a?usp=sharing" target="_blank" class="btn-primary" style="display:inline-block; text-decoration:none; margin-bottom: 1rem; background-color: #4285F4; border-color: #4285F4;">📁 Abrir Carpeta de Google Drive</a>
+                    <p style="color: #bbb; font-size: 0.9rem;">Sube tus fotos a esa carpeta pública. Una vez subidas, obtén el "enlace directo de descarga" de la imagen.</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3 style="color: white; margin-bottom: 1rem;">2. Pega el enlace directo aquí</h3>
+                    <input type="text" id="carousel-url-input" placeholder="Ej. https://drive.google.com/uc?export=view&id=1XyZabc..." style="width: 100%; padding: 0.8rem; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-dark); color: white; margin-bottom: 1rem;">
+                    <button class="btn-accent" onclick="addCarouselUrl()">Agregar Imagen al Carrusel</button>
+                    <p id="carousel-upload-msg" style="color: var(--unifreire-yellow); margin-top: 1rem;"></p>
+                </div>
+
+                <h3 style="color: var(--unifreire-yellow); margin-bottom: 1rem;">Fotografías Actuales</h3>
+                <div class="grid-container" style="padding: 0; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))" id="carousel-preview-grid">
+                    <!-- Dynamic -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        function checkAdminPassword() {
+            const val = document.getElementById('admin-pass').value;
+            if(val === 'Marketing2026') {
+                document.getElementById('password-overlay').style.display = 'none';
+            } else {
+                document.getElementById('pass-error').style.display = 'block';
+            }
+        }
+        
+        document.getElementById('admin-pass').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') checkAdminPassword();
+        });
+    </script>
+    <script src="admin.js"></script>
+
+    <!-- Image Position Modal -->
+    <div id="image-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center; flex-direction:column;">
+        <h3 style="color:white; margin-bottom: 1rem; font-size: 1.8rem;">Ajustar Encuadre de Imagen</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Utiliza las barras para mover la fotografía y previsualizar cómo se verá el banner.</p>
+        <div style="width: 90%; height: 250px; max-width: 1000px; border: 2px solid var(--unifreire-yellow); overflow: hidden; position: relative; border-radius: 8px;">
+             <div id="img-preview" style="width: 100%; height: 100%; background: url() center/cover no-repeat;"></div>
+        </div>
+        <div style="margin-top: 2rem; width: 90%; max-width: 600px; color: white;">
+            <label style="font-weight: bold; color: var(--unifreire-yellow);">Nivel de Zoom (Acercar/Alejar): <input type="range" id="scale-z" min="100" max="300" value="100" style="width:100%; margin-top:0.5rem;"></label>
+            <br><br>
+            <label style="font-weight: bold; color: var(--unifreire-yellow);">Posición Vertical (Arriba/Abajo): <input type="range" id="pos-y" min="0" max="100" value="50" style="width:100%; margin-top:0.5rem;"></label>
+            <br><br>
+            <label style="font-weight: bold; color: var(--unifreire-yellow);">Posición Horizontal (Izquierda/Derecha): <input type="range" id="pos-x" min="0" max="100" value="50" style="width:100%; margin-top:0.5rem;"></label>
+            <br><br>
+            <div style="display:flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                <button class="btn-primary" onclick="saveImageSetup()">Guardar Banner</button>
+                <button class="btn-primary" style="background: #e74c3c;" onclick="document.getElementById('image-modal').style.display='none'">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.code === "F12" || e.keyCode === 123) return false;
+            if(e.ctrlKey && e.shiftKey && (e.code === "KeyI" || e.code === "KeyJ" || e.code === "KeyC")) return false;
+            if(e.ctrlKey && e.code === "KeyU") return false;
+        };
+    </script>
+
+    <!-- Career Editor Modal -->
+    <div id="careerEditorModal" style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center;">
+        <div class="card glass" style="width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
+            <span onclick="document.getElementById('careerEditorModal').style.display='none';" style="position:absolute; top:15px; right:20px; color:#f1f1f1; font-size:30px; font-weight:bold; cursor:pointer;">&times;</span>
+            <h2 style="color: var(--unifreire-yellow); margin-bottom: 1rem;">Editar Carrera: <span id="ce-career-id"></span></h2>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="grid-column: 1 / -1;">
+                    <label>Título de la Carrera</label>
+                    <input type="text" id="ce-title" style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label>Descripción</label>
+                    <textarea id="ce-desc" rows="3" style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;"></textarea>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                        <input type="checkbox" id="ce-flag-saltillo" style="width:1.2rem; height:1.2rem;">
+                        <span>Disponible en Plantel Saltillo</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; margin-top:0.5rem;">
+                        <input type="checkbox" id="ce-flag-mty" style="width:1.2rem; height:1.2rem;">
+                        <span>Disponible en Plantel Monterrey</span>
+                    </label>
+                </div>
+                
+                <!-- Saltillo -->
+                <div style="background: rgba(0,77,54,0.4); padding: 1rem; border-radius: 8px; border: 1px solid var(--unifreire-yellow);">
+                    <h3 style="color: var(--unifreire-yellow); margin-top:0; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">Datos Saltillo</h3>
+                    <label>Requisitos de Inscripción (HTML permitido)</label>
+                    <textarea id="ce-req-saltillo" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                    
+                    <label>Modalidades y Horarios (HTML permitido)</label>
+                    <textarea id="ce-mod-saltillo" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                    
+                    <label>Costos (HTML permitido)</label>
+                    <textarea id="ce-cost-saltillo" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                </div>
+
+                <!-- Monterrey -->
+                <div style="background: rgba(0,77,54,0.4); padding: 1rem; border-radius: 8px; border: 1px solid var(--unifreire-yellow);">
+                    <h3 style="color: var(--unifreire-yellow); margin-top:0; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">Datos Monterrey</h3>
+                    <label>Requisitos de Inscripción (HTML permitido)</label>
+                    <textarea id="ce-req-mty" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                    
+                    <label>Modalidades y Horarios (HTML permitido)</label>
+                    <textarea id="ce-mod-mty" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                    
+                    <label>Costos (HTML permitido)</label>
+                    <textarea id="ce-cost-mty" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                </div>
+            </div>
+            
+            <button onclick="saveCareerChanges()" class="btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem; border: none; cursor: pointer;">Guardar Cambios</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
