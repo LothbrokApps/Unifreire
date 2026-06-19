@@ -276,18 +276,7 @@
             <div class="promo-card" id="card-mty">
                 <h3 style="margin-bottom: 0;">PLANTEL MONTERREY</h3>
                 
-                <!-- Requisitos de Inscripción Retractil Monterrey -->
-                <div class="cuatrimestre-card glass" style="margin-top: 1.5rem; overflow: hidden; padding: 0;">
-                    <div class="cuatrimestre-header" onclick="toggleAccordion(this)" style="padding: 1rem 1.5rem; background: rgba(0,77,54,0.3);">
-                        <div class="cuatrimestre-title" style="margin-bottom:0; font-size: 1.1rem; color: var(--unifreire-yellow);">Requisitos de Inscripción</div>
-                        <span class="acc-icon" style="color:var(--unifreire-yellow);">▼</span>
-                    </div>
-                    <div class="cuatrimestre-content" style="display: block; padding: 0 1.5rem 1.5rem 1.5rem; margin-top: 0; border-top: none;">
-                        <div id="dyn-req-mty" style="margin-top: 1rem; margin-bottom: 0;">
-                            <!-- Inyectado via JS -->
-                        </div>
-                    </div>
-                </div>
+                
 
                 <div class="cuatrimestre-card glass" style="margin-top: 1.5rem;">
                     <!-- Split 2 columns -->
@@ -410,7 +399,6 @@
             if (document.getElementById('dyn-mod-saltillo')) document.getElementById('dyn-mod-saltillo').innerHTML = ((override.saltillo && override.saltillo.modalidades && override.saltillo.modalidades.trim() !== "") ? override.saltillo.modalidades : mod_saltillo);
             if (document.getElementById('dyn-cost-saltillo')) document.getElementById('dyn-cost-saltillo').innerHTML = ((override.saltillo && override.saltillo.costos && override.saltillo.costos.trim() !== "") ? override.saltillo.costos : cost_saltillo);
 
-            if (document.getElementById('dyn-req-mty')) document.getElementById('dyn-req-mty').innerHTML = ((override.monterrey && override.monterrey.requisitos && override.monterrey.requisitos.trim() !== "") ? override.monterrey.requisitos : req_html);
             if (document.getElementById('dyn-mod-mty')) document.getElementById('dyn-mod-mty').innerHTML = ((override.monterrey && override.monterrey.modalidades && override.monterrey.modalidades.trim() !== "") ? override.monterrey.modalidades : mod_mty);
             if (document.getElementById('dyn-cost-mty')) document.getElementById('dyn-cost-mty').innerHTML = ((override.monterrey && override.monterrey.costos && override.monterrey.costos.trim() !== "") ? override.monterrey.costos : cost_mty);
 

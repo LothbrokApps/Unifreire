@@ -458,3 +458,68 @@ body {
     width: 25px !important;
     height: 25px !important;
 }
+
+/* --- MOBILE GLOBAL TYPOGRAPHY FIXES --- */
+@media (max-width: 768px) {
+    /* Adjust base font size slightly to fit more text on one line */
+    html, body {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: 1.8rem !important;
+        line-height: 1.2 !important;
+    }
+    h2 {
+        font-size: 1.5rem !important;
+        line-height: 1.2 !important;
+    }
+    h3 {
+        font-size: 1.3rem !important;
+        line-height: 1.2 !important;
+    }
+    h4 {
+        font-size: 1.1rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    p, li, span, div {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    
+    /* Ensure buttons fit nicely without huge multi-lines */
+    button, .btn-primary, .btn-accent {
+        font-size: 0.9rem !important;
+        padding: 0.6rem 1rem !important;
+        white-space: normal; /* Allow wrapping if absolutely needed, but smaller text reduces lines */
+        word-break: break-word;
+    }
+
+    /* Target specific components if they span too much */
+    .hero-title {
+        font-size: 2rem !important;
+    }
+    .hero-subtitle {
+        font-size: 1.1rem !important;
+    }
+
+    /* In flex/grid containers, force wrapping to keep lines short or fit properly */
+    .flex, .grid {
+        gap: 0.8rem;
+    }
+
+    /* Carreras Cards titles */
+    .career-title {
+        font-size: 1.2rem !important;
+    }
+    .career-desc {
+        font-size: 0.9rem !important;
+    }
+
+    /* Ensure text breaks words to prevent horizontal scrolling or cut-offs */
+    * {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+}
