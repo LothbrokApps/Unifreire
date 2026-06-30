@@ -139,7 +139,7 @@ function renderPlantelesFooter() {
     } catch(e) {}
 
     container.innerHTML = planteles.map(p => `
-        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; flex: 1 1 0; min-width: 150px; box-sizing: border-box; word-wrap: break-word;">
             <h4 style="color: white; margin-bottom: 1rem;">${p.nombre}</h4>
             <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">${p.ubicacion}</p>
             <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">${p.telefono}</p>
