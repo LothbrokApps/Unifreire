@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadLeads();
     loadCareers();
+    renderPlantelesAdmin();
 });
 
 function switchTab(tabId) {
@@ -445,4 +446,105 @@ function saveCareerChanges() {
     alert('Cambios guardados localmente. Al cargar la carrera se reflejará esta información.');
     document.getElementById('careerEditorModal').style.display = 'none';
     renderCareersTab(); // Refresh list to show updated name
+}
+
+
+// ==================== PLANTELES LOGIC ====================
+const DEFAULT_PLANTELES_ADMIN = [
+    { nombre: "Plantel Centro", ubicacion: "📍 José María Arteaga 240<br>Zona Centro, Saltillo, Coah.", telefono: "📲 (844) 410-5762", liga: "https://maps.app.goo.gl/tbLyqT6qCdnmW3in6" },
+    { nombre: "Plantel Matamoros", ubicacion: "📍 Mariano Matamoros 766<br>Zona Centro, Saltillo, Coah.", telefono: "📲 (844) 726-0527", liga: "https://maps.app.goo.gl/L3NqmizFhWFZWsFw9" },
+    { nombre: "Plantel Sur", ubicacion: "📍 Calle 2 #2648, esq. Blvd. Hidalgo<br>Fracc. Miguel Hidalgo, Saltillo, Coah.", telefono: "📲 (844) 112-4654", liga: "https://maps.app.goo.gl/v49aGjP2VZUDNmpSA" },
+    { nombre: "Plantel Monterrey", ubicacion: "📍 Albino Espinosa Ote 324<br>entre Galeana y E. Carranza, N.L.", telefono: "📲 (81) 163-70651", liga: "https://maps.app.goo.gl/fEiJBCyAh1eWbuLt7" }
+];
+
+function getPlanteles() {
+    let planteles = DEFAULT_PLANTELES_ADMIN;
+    try {
+        const custom = localStorage.getItem('unifreire_planteles_custom');
+        if (custom) planteles = JSON.parse(custom);
+    } catch(e) {}
+    return planteles;
+}
+
+function renderPlantelesAdmin() {
+    const tbody = document.getElementById('planteles-admin-body');
+    if (!tbody) return;
+    
+    const planteles = getPlanteles();
+    if (planteles.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No hay planteles.</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = planteles.map((p, index) => `
+        <tr>
+            <td>${p.nombre}</td>
+            <td>${p.ubicacion}</td>
+            <td>${p.telefono}</td>
+            <td>
+                <button onclick="openPlantelEditor(${index})" class="btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Editar</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openPlantelEditor(index) {
+    const planteles = getPlanteles();
+    document.getElementById('pe-id').value = index;
+    
+    if (index === -1) {
+        document.getElementById('pe-modal-title').innerText = "Agregar Plantel";
+        document.getElementById('pe-nombre').value = "";
+        document.getElementById('pe-ubicacion').value = "";
+        document.getElementById('pe-telefono').value = "";
+        document.getElementById('pe-liga').value = "";
+        document.getElementById('pe-btn-delete').style.display = "none";
+    } else {
+        const p = planteles[index];
+        document.getElementById('pe-modal-title').innerText = "Editar Plantel";
+        document.getElementById('pe-nombre').value = p.nombre;
+        document.getElementById('pe-ubicacion').value = p.ubicacion;
+        document.getElementById('pe-telefono').value = p.telefono;
+        document.getElementById('pe-liga').value = p.liga;
+        document.getElementById('pe-btn-delete').style.display = "block";
+    }
+    
+    document.getElementById('plantelEditorModal').style.display = 'flex';
+}
+
+function savePlantel() {
+    const planteles = getPlanteles();
+    const index = parseInt(document.getElementById('pe-id').value);
+    
+    const nuevo = {
+        nombre: document.getElementById('pe-nombre').value,
+        ubicacion: document.getElementById('pe-ubicacion').value,
+        telefono: document.getElementById('pe-telefono').value,
+        liga: document.getElementById('pe-liga').value
+    };
+    
+    if (index === -1) {
+        planteles.push(nuevo);
+    } else {
+        planteles[index] = nuevo;
+    }
+    
+    localStorage.setItem('unifreire_planteles_custom', JSON.stringify(planteles));
+    renderPlantelesAdmin();
+    document.getElementById('plantelEditorModal').style.display = 'none';
+    alert("Plantel guardado exitosamente. Se reflejará en la web automáticamente.");
+}
+
+function deletePlantel() {
+    if(!confirm("¿Estás seguro de eliminar este plantel?")) return;
+    
+    const index = parseInt(document.getElementById('pe-id').value);
+    if(index === -1) return;
+    
+    const planteles = getPlanteles();
+    planteles.splice(index, 1);
+    
+    localStorage.setItem('unifreire_planteles_custom', JSON.stringify(planteles));
+    renderPlantelesAdmin();
+    document.getElementById('plantelEditorModal').style.display = 'none';
 }

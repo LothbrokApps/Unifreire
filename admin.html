@@ -208,7 +208,7 @@
             </div>
             <a class="nav-item active" onclick="switchTab('leads')">Ver Leads</a>
             <a class="nav-item" onclick="switchTab('carreras')">Gestión de Carreras</a>
-            <a class="nav-item" onclick="switchTab('marketing')">Campañas y Banners</a>
+            <a class="nav-item" onclick="switchTab('marketing')">Banners</a>
 
             <a class="nav-item" onclick="switchTab('carrusel')">Control Carrusel</a>
             <a class="nav-item" href="index.html" style="margin-top: auto; position: absolute; bottom: 20px; width: 200px;">← Volver a la Web</a>
@@ -252,8 +252,8 @@
             <!-- MARKETING TAB -->
             <div id="marketing" class="tab-content">
                 <div class="header-action">
-                    <h2>Campañas y Banners</h2>
-                    <button class="btn-accent">Activar Campaña</button>
+                    <h2>Banners</h2>
+                    
                 </div>
                 
                 <div class="card glass" style="margin-bottom: 2rem;">
@@ -439,6 +439,41 @@
                 </div>
             </div>
             <button onclick="saveCareerChanges()" class="btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem; border: none; cursor: pointer;">Guardar Cambios</button>
+        </div>
+    </div>
+
+
+    <!-- Modal: Editar/Agregar Plantel -->
+    <div id="plantelEditorModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center; padding: 1rem;">
+        <div class="glass" style="width: 100%; max-width: 500px; padding: 2rem; border-radius: 12px; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 1rem;">
+                <h2 style="margin:0; color: var(--unifreire-yellow);" id="pe-modal-title">Editar Plantel</h2>
+                <button onclick="document.getElementById('plantelEditorModal').style.display='none'" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            
+            <input type="hidden" id="pe-id">
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div>
+                    <label style="display:block; margin-bottom:0.5rem;">Nombre del Plantel</label>
+                    <input type="text" id="pe-nombre" class="input-field" placeholder="Ej. Plantel Centro">
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:0.5rem;">Ubicación (Se permite HTML como &lt;br&gt;)</label>
+                    <textarea id="pe-ubicacion" class="input-field" style="min-height: 80px;" placeholder="Ej. 📍 Calle 123<br>Colonia Centro"></textarea>
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:0.5rem;">Teléfono</label>
+                    <input type="text" id="pe-telefono" class="input-field" placeholder="Ej. 📲 (844) 123-4567">
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:0.5rem;">Liga GPS-Google</label>
+                    <input type="text" id="pe-liga" class="input-field" placeholder="Ej. https://maps.app.goo.gl/...">
+                </div>
+            </div>
+            
+            <button onclick="savePlantel()" class="btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem; border: none; cursor: pointer;">Guardar Plantel</button>
+            <button id="pe-btn-delete" onclick="deletePlantel()" style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1rem; border: 1px solid red; background: rgba(255,0,0,0.1); color: red; cursor: pointer; border-radius: 8px;">Eliminar Plantel</button>
         </div>
     </div>
 
