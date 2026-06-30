@@ -209,6 +209,7 @@
             <a class="nav-item active" onclick="switchTab('leads')">Ver Leads</a>
             <a class="nav-item" onclick="switchTab('carreras')">Gestión de Carreras</a>
             <a class="nav-item" onclick="switchTab('marketing')">Banners</a>
+            <a class="nav-item" onclick="switchTab('tab-planteles')">Planteles</a>
 
             <a class="nav-item" onclick="switchTab('carrusel')">Control Carrusel</a>
             <a class="nav-item" href="index.html" style="margin-top: auto; position: absolute; bottom: 20px; width: 200px;">← Volver a la Web</a>
@@ -270,7 +271,28 @@
                 <div class="grid-container" style="padding: 0; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))" id="admin-campanas-banners-grid"></div>
             </div>
 
-
+            <!-- PLANTELES TAB -->
+            <div id="tab-planteles" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Gestión de Planteles</h2>
+                    <button class="btn-primary" onclick="openPlantelEditor(-1)">+ Agregar Plantel</button>
+                </div>
+                <div class="card">
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Ubicación</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="planteles-admin-body">
+                            <!-- Llenado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <!-- CARRUSEL TAB -->
             <div id="carrusel" class="tab-content">
