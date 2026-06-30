@@ -350,27 +350,34 @@
                 <!-- Saltillo -->
                 <div style="background: rgba(0,77,54,0.4); padding: 1rem; border-radius: 8px; border: 1px solid var(--unifreire-yellow);">
                     <h3 style="color: var(--unifreire-yellow); margin-top:0; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">Datos Saltillo</h3>
-                    <label>Requisitos de Inscripción (HTML permitido)</label>
-                    <textarea id="ce-req-saltillo" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                    
+    
                     
                     <label>Modalidades y Horarios (HTML permitido)</label>
-                    <textarea id="ce-mod-saltillo" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+                    
+    <div class="rich-editor-container" style="margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; background: rgba(0,0,0,0.2);">
+        <div class="editor-toolbar" style="background: rgba(255,255,255,0.1); padding: 0.3rem; border-bottom: 1px solid rgba(255,255,255,0.2); display: flex; gap: 0.5rem;">
+            <button type="button" onclick="document.execCommand('bold', false, null)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer; font-weight: bold;" title="Negritas">B</button>
+            <button type="button" onclick="document.execCommand('italic', false, null)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer; font-style: italic;" title="Cursiva">I</button>
+            <button type="button" onclick="document.execCommand('fontSize', false, 4)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer;" title="Aumentar Tamaño">A+</button>
+            <button type="button" onclick="document.execCommand('fontSize', false, 2)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer;" title="Disminuir Tamaño">A-</button>
+        </div>
+        <div id="ce-mod-mty" contenteditable="true" style="width: 100%; min-height: 100px; padding: 0.5rem; color: white; outline: none; word-wrap: break-word;"></div>
+    </div>
+    
                     
                     <label>Costos (HTML permitido)</label>
-                    <textarea id="ce-cost-saltillo" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
-                </div>
-
-                <!-- Monterrey -->
-                <div style="background: rgba(0,77,54,0.4); padding: 1rem; border-radius: 8px; border: 1px solid var(--unifreire-yellow);">
-                    <h3 style="color: var(--unifreire-yellow); margin-top:0; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;">Datos Monterrey</h3>
-                    <label>Requisitos de Inscripción (HTML permitido)</label>
-                    <textarea id="ce-req-mty" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
                     
-                    <label>Modalidades y Horarios (HTML permitido)</label>
-                    <textarea id="ce-mod-mty" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
-                    
-                    <label>Costos (HTML permitido)</label>
-                    <textarea id="ce-cost-mty" rows="4" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white;"></textarea>
+    <div class="rich-editor-container" style="margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; background: rgba(0,0,0,0.2);">
+        <div class="editor-toolbar" style="background: rgba(255,255,255,0.1); padding: 0.3rem; border-bottom: 1px solid rgba(255,255,255,0.2); display: flex; gap: 0.5rem;">
+            <button type="button" onclick="document.execCommand('bold', false, null)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer; font-weight: bold;" title="Negritas">B</button>
+            <button type="button" onclick="document.execCommand('italic', false, null)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer; font-style: italic;" title="Cursiva">I</button>
+            <button type="button" onclick="document.execCommand('fontSize', false, 4)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer;" title="Aumentar Tamaño">A+</button>
+            <button type="button" onclick="document.execCommand('fontSize', false, 2)" style="background: var(--unifreire-yellow); color: black; border: none; padding: 0.2rem 0.6rem; border-radius: 3px; cursor: pointer;" title="Disminuir Tamaño">A-</button>
+        </div>
+        <div id="ce-cost-mty" contenteditable="true" style="width: 100%; min-height: 100px; padding: 0.5rem; color: white; outline: none; word-wrap: break-word;"></div>
+    </div>
+    
                 </div>
             </div>
             
