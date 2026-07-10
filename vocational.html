@@ -337,7 +337,7 @@
             
             <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:2rem;">
                 <button class="btn-accent" style="padding: 1rem 2rem; border-radius:30px;" onclick="goToCareer()">VER PLAN DE ESTUDIOS</button>
-                <a href="https://unifreire.edu.mx/SEUnifreire/" target="_blank" class="btn-fosfo" style="display:flex; align-items:center;">INSCRIBIRME AHORA</a>
+                <a href="https://unifreire.edu.mx/SEUnifreire/" target="_blank" id="btn-inscribirme" class="btn-fosfo" style="display:flex; align-items:center;">INSCRIBIRME AHORA</a>
             </div>
         </div>
     </div>
@@ -519,6 +519,12 @@
             const rb = document.getElementById('result-box');
             rb.style.display = 'block';
             document.getElementById('match-career').innerText = result.title;
+            
+            const btnInscribirme = document.getElementById('btn-inscribirme');
+            if (btnInscribirme) {
+                const message = `Hola, hice el test vocacional y mi perfil es para la ${result.title}. Me gustaría recibir información de inscripción.`;
+                btnInscribirme.href = `https://wa.me/message/VP27JTT7ZB55G1?text=${encodeURIComponent(message)}`;
+            }
         }
 
         function goToCareer() {
