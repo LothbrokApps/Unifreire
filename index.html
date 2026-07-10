@@ -108,18 +108,14 @@
         
         <div id="carousel-track-container" style="position: relative; z-index: 1; width: 100%; overflow: hidden; padding: 2rem 0;">
             <style>
-                @keyframes scrollInfinite {
-                   0% { transform: translateX(0); }
-                   100% { transform: translateX(calc(-50% - 0.5rem)); } 
-                }
                 .scroll-track {
                    display: flex;
                    width: max-content;
                    gap: 1rem;
-                   animation: scrollInfinite 92s linear infinite;
+                   cursor: grab;
                 }
-                .scroll-track:hover {
-                   animation-play-state: paused;
+                .scroll-track:active {
+                   cursor: grabbing;
                 }
                 .scroll-item {
                    width: 350px; 
@@ -130,6 +126,7 @@
                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
                    transition: transform 0.3s ease;
                    cursor: pointer;
+                   flex-shrink: 0;
                 }
                 .scroll-item:hover {
                    transform: scale(1.05);
@@ -143,7 +140,18 @@
             <script>
                 (function() {
                     const track = document.getElementById('carousel-track');
-                    if(!track) return;
+                    const container = document.getElementById('carousel-track-container');
+                    if(!track || !container) return;
+                    
+                    // Make container scrollable for touch & drag
+                    container.style.overflowX = 'auto';
+                    container.style.scrollBehavior = 'auto';
+                    // Hide scrollbar visually
+                    container.style.scrollbarWidth = 'none'; // Firefox
+                    container.style.msOverflowStyle = 'none'; // IE/Edge
+                    const style = document.createElement('style');
+                    style.innerHTML = '#carousel-track-container::-webkit-scrollbar { display: none; }'; // Chrome/Safari
+                    document.head.appendChild(style);
                     
                     let pics = [];
                     try {
@@ -159,8 +167,8 @@
                         ];
                     }
                     
-                    // We duplicate the array 3 times to ensure enough width for seamless infinite scroll
-                    const combined = [...pics, ...pics, ...pics, ...pics]; 
+                    // Duplicate for infinite scroll feel
+                    const combined = [...pics, ...pics, ...pics, ...pics, ...pics, ...pics]; 
                     
                     let h = '';
                     combined.forEach(p => {
@@ -168,6 +176,52 @@
                     });
                     
                     track.innerHTML = h;
+
+                    // Drag to scroll logic
+                    let isDown = false;
+                    let startX;
+                    let scrollLeft;
+                    let isHovered = false;
+                    // Velocidad bajada un 10%
+                    let autoScrollSpeed = 0.8; 
+                    
+                    container.addEventListener('mousedown', (e) => {
+                        isDown = true;
+                        startX = e.pageX - container.offsetLeft;
+                        scrollLeft = container.scrollLeft;
+                    });
+                    container.addEventListener('mouseleave', () => {
+                        isDown = false;
+                        isHovered = false;
+                    });
+                    container.addEventListener('mouseenter', () => {
+                        isHovered = true;
+                    });
+                    container.addEventListener('mouseup', () => {
+                        isDown = false;
+                    });
+                    container.addEventListener('mousemove', (e) => {
+                        if (!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - container.offsetLeft;
+                        const walk = (x - startX) * 2; 
+                        container.scrollLeft = scrollLeft - walk;
+                    });
+
+                    // Touch support for pausing auto-scroll
+                    container.addEventListener('touchstart', () => { isHovered = true; }, {passive: true});
+                    container.addEventListener('touchend', () => { isHovered = false; });
+
+                    function autoScroll() {
+                        if (!isHovered && !isDown) {
+                            container.scrollLeft += autoScrollSpeed;
+                            if (container.scrollLeft >= track.scrollWidth / 2) {
+                                container.scrollLeft = 0;
+                            }
+                        }
+                        requestAnimationFrame(autoScroll);
+                    }
+                    requestAnimationFrame(autoScroll);
                 })();
             </script>
         </div>
