@@ -523,3 +523,22 @@ body {
         overflow-wrap: break-word;
     }
 }
+
+/* Boton LED Fosfo */
+.btn-fosfo {
+    text-decoration: none;
+    color: #FFE600;
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    border: 2px solid #FFE600;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #FFE600, inset 0 0 5px #FFE600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+.btn-fosfo:hover {
+    background: rgba(255, 230, 0, 0.15);
+    box-shadow: 0 0 15px #FFE600, inset 0 0 8px #FFE600;
+}
