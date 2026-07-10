@@ -122,32 +122,3 @@ async function cargarConfigDesdeNube() {
 }
 
 
-const DEFAULT_PLANTELES = [
-    { nombre: "Plantel Centro", ubicacion: "📍 José María Arteaga 240<br>Zona Centro, Saltillo, Coah.", telefono: "📲 (844) 410-5762", liga: "https://maps.app.goo.gl/tbLyqT6qCdnmW3in6" },
-    { nombre: "Plantel Matamoros", ubicacion: "📍 Mariano Matamoros 766<br>Zona Centro, Saltillo, Coah.", telefono: "📲 (844) 726-0527", liga: "https://maps.app.goo.gl/L3NqmizFhWFZWsFw9" },
-    { nombre: "Plantel Sur", ubicacion: "📍 Calle 2 #2648, esq. Blvd. Hidalgo<br>Fracc. Miguel Hidalgo, Saltillo, Coah.", telefono: "📲 (844) 112-4654", liga: "https://maps.app.goo.gl/v49aGjP2VZUDNmpSA" },
-    { nombre: "Plantel Monterrey", ubicacion: "📍 Albino Espinosa Ote 324<br>entre Galeana y E. Carranza, N.L.", telefono: "📲 (81) 163-70651", liga: "https://maps.app.goo.gl/fEiJBCyAh1eWbuLt7" }
-];
-
-function renderPlantelesFooter() {
-    const container = document.getElementById('planteles-container');
-    if (!container) return;
-    let planteles = DEFAULT_PLANTELES;
-    try {
-        const custom = localStorage.getItem('unifreire_planteles_custom');
-        if (custom) planteles = JSON.parse(custom);
-    } catch(e) {}
-
-    container.innerHTML = planteles.map(p => `
-        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; flex: 1 1 0; min-width: 150px; box-sizing: border-box; word-wrap: break-word;">
-            <h4 style="color: white; margin-bottom: 1rem;">${p.nombre}</h4>
-            <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #bbb;">${p.ubicacion}</p>
-            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #bbb;">${p.telefono}</p>
-            <a href="${p.liga}" target="_blank" class="btn-accent" style="font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-block;">Ver en Google Maps</a>
-        </div>
-    `).join('');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    renderPlantelesFooter();
-});
