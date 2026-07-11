@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'unifreire-v3';
+const CACHE_NAME = 'unifreire-v4';
 const ASSETS = [
     './',
     './index.html',

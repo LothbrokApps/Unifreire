@@ -431,13 +431,13 @@
                              </label>`;
             });
 
-            // Slide out old question
-            const oldSlide = document.querySelector('.question-slide.active');
-            if (oldSlide) {
-                oldSlide.classList.remove('active');
-                oldSlide.classList.add('exit');
-                setTimeout(() => oldSlide.remove(), 500);
-            }
+            // Slide out old questions
+            const allSlides = document.querySelectorAll('.question-slide');
+            allSlides.forEach(slide => {
+                slide.classList.remove('active');
+                slide.classList.add('exit');
+                setTimeout(() => slide.remove(), 500);
+            });
 
             // Slide in new question
             const newSlide = document.createElement('div');
@@ -466,6 +466,10 @@
         }
 
         function selectOption(val, element) {
+            const slide = element.closest('.question-slide');
+            if (slide.dataset.answered === 'true') return;
+            slide.dataset.answered = 'true';
+
             // Unselect others
             const allLabels = element.parentElement.querySelectorAll('.option-label');
             allLabels.forEach(lbl => lbl.classList.remove('selected'));
@@ -506,11 +510,11 @@
             }
 
             const maps = {
-                'A': {id: '13', title: 'Ingeniería en Mecatrónica'},
-                'B': {id: '6', title: 'Licenciatura en Administración'},
-                'C': {id: '3', title: 'Licenciatura en Derecho'},
-                'D': {id: '10', title: 'Licenciatura en Criminología'},
-                'E': {id: '2', title: 'Licenciatura en Arquitectura'}
+                'A': {id: 'ing-mecatronica', title: 'Ingeniería en Mecatrónica'},
+                'B': {id: 'lic-administracion', title: 'Licenciatura en Administración'},
+                'C': {id: 'lic-derecho', title: 'Licenciatura en Derecho'},
+                'D': {id: 'lic-criminologia', title: 'Licenciatura en Criminología'},
+                'E': {id: 'lic-arquitectura', title: 'Licenciatura en Arquitectura'}
             };
 
             const result = maps[winner] || maps['A'];
