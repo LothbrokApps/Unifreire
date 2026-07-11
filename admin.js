@@ -13,14 +13,12 @@ function switchTab(tabId) {
 }
 
 async function loadLeads() {
-    const tbGen = document.getElementById('leads-gen-body');
-    const tbMas = document.getElementById('leads-mas-body');
+    const tb = document.getElementById('leads-body');
     const displayCount = document.getElementById('lead-count');
     
-    if (!tbGen || !tbMas) return;
+    if (!tb) return;
 
-    tbGen.innerHTML = `<tr><td colspan="5" style="text-align: center;">Cargando registros desde la nube...</td></tr>`;
-    tbMas.innerHTML = `<tr><td colspan="5" style="text-align: center;">Cargando registros desde la nube...</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="5" style="text-align: center;">Cargando registros desde la nube...</td></tr>`;
 
     let leads = [];
     // Load local leads first to ensure they are never lost
@@ -47,19 +45,17 @@ async function loadLeads() {
     }
 
     if (leads.length === 0) {
-        tbGen.innerHTML = `<tr><td colspan="5" style="text-align: center;">No hay leads registrados aún.</td></tr>`;
-        tbMas.innerHTML = `<tr><td colspan="5" style="text-align: center;">No hay leads registrados aún.</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="5" style="text-align: center;">No hay leads registrados aún.</td></tr>`;
         return;
     }
 
     if(displayCount) displayCount.innerText = leads.length;
     
-    let htmlGen = '';
-    let htmlMas = '';
+    let html = '';
     
     leads.reverse().forEach(lead => {
         const dateStr = lead.fecha ? new Date(lead.fecha).toLocaleDateString('es-MX', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
-        const row = `
+        html += `
             <tr>
                 <td>${lead.nombre}</td>
                 <td>${lead.carrera}</td>
@@ -68,16 +64,9 @@ async function loadLeads() {
                 <td>${dateStr}</td>
             </tr>
         `;
-        
-        if((lead.nivel && lead.nivel.toLowerCase().includes('maestría')) || (lead.carrera && lead.carrera.toLowerCase().includes('maestría'))) {
-            htmlMas += row;
-        } else {
-            htmlGen += row;
-        }
     });
     
-    tbGen.innerHTML = htmlGen || `<tr><td colspan="5" style="text-align: center;">Sin registros en esta categoría.</td></tr>`;
-    tbMas.innerHTML = htmlMas || `<tr><td colspan="5" style="text-align: center;">Sin registros en esta categoría.</td></tr>`;
+    tb.innerHTML = html;
     
     const visitCountData = localStorage.getItem('unifreire_visit_count') || "0";
     const displayVisit = document.getElementById('visit-count');

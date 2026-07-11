@@ -563,3 +563,36 @@ body {
     transform: scale(1);
 }
 
+
+@media (max-width: 768px) {
+    .wa-text-desktop { display: none !important; }
+    .wa-text-mobile { display: inline !important; }
+
+    #careers-grid.grid-container {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.8rem;
+        padding: 0 1rem 3rem 1rem;
+    }
+    
+    #careers-grid .card {
+        padding: 1rem;
+    }
+    
+    #careers-grid .card-title {
+        font-size: 1rem !important;
+    }
+
+    #planteles-container {
+        justify-content: flex-start !important;
+        padding-bottom: 1rem;
+    }
+    
+    #planteles-container > div {
+        flex: 0 0 85% !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .wa-text-desktop { display: inline !important; }
+    .wa-text-mobile { display: none !important; }
+}
