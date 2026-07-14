@@ -303,6 +303,16 @@ function exportExcel() {
     link.remove();
 }
 
+function limpiarYExportar() {
+    exportExcel();
+    
+    // Solo se borra visualmente como se solicitó
+    const tb = document.getElementById('leads-body');
+    if (tb) {
+        tb.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--unifreire-yellow);">La lista visual ha sido limpiada.<br><span style="font-size:0.8rem; color: #888;">Recarga la página para visualizar los registros nuevamente (los datos no han sido borrados de la base de datos).</span></td></tr>`;
+    }
+}
+
 // Carousel Logic
 function renderCarouselAdmin() {
     const grid = document.getElementById('carousel-preview-grid');

@@ -221,7 +221,10 @@
             <div id="leads" class="tab-content active">
                 <div class="header-action">
                     <h2>Leads de Admisión</h2>
-                    <button class="btn-accent" onclick="exportExcel()">Exportar a Excel</button>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn-accent" onclick="exportExcel()">Exportar a Excel</button>
+                        <button class="btn-primary" onclick="limpiarYExportar()" style="background: #e74c3c; border: none;">Limpiar</button>
+                    </div>
                 </div>
                 <table>
                     <thead>
