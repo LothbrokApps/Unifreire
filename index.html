@@ -147,32 +147,23 @@
             </div>
             
             <script>
-                (function() {
+                window.renderCarousel = function() {
                     const track = document.getElementById('carousel-track');
                     const container = document.getElementById('carousel-track-container');
                     if(!track || !container) return;
-                    
-                    // Make container scrollable for touch & drag
-                    container.style.overflowX = 'auto';
-                    container.style.scrollBehavior = 'auto';
-                    // Hide scrollbar visually
-                    container.style.scrollbarWidth = 'none'; // Firefox
-                    container.style.msOverflowStyle = 'none'; // IE/Edge
-                    const style = document.createElement('style');
-                    style.innerHTML = '#carousel-track-container::-webkit-scrollbar { display: none; }'; // Chrome/Safari
-                    document.head.appendChild(style);
                     
                     let pics = [];
                     try {
                         pics = JSON.parse(localStorage.getItem('unifreire_carousel_images') || '[]');
                     } catch(e) {}
                     
-                    // Fallback to defaults if none available
+                    // Fallback to Drive images if none available (No stock photos)
                     if(!pics || pics.length === 0) {
                         pics = [
-                            'https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                            'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                            'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+                            'https://drive.google.com/thumbnail?id=12chFEcVdJVHqvlv3XWXl3T1CwqUQOEOB&sz=w1920-h1080',
+                            'https://drive.google.com/thumbnail?id=1ClM0HPvXsr3FrUPAxVL7bVtp_Pwd9ZVz&sz=w1920-h1080',
+                            'https://drive.google.com/thumbnail?id=1nK0Q6eFhlB7x2RcMO1NtXsplfa7LWXpg&sz=w1920-h1080',
+                            'https://drive.google.com/thumbnail?id=1k1SCVRTbBzVjhBtOCHsa8T7h6RdAsSn2&sz=w1920-h1080'
                         ];
                     }
                     
@@ -185,6 +176,23 @@
                     });
                     
                     track.innerHTML = h;
+                };
+
+                (function() {
+                    const container = document.getElementById('carousel-track-container');
+                    if(!container) return;
+                    
+                    // Make container scrollable for touch & drag
+                    container.style.overflowX = 'auto';
+                    container.style.scrollBehavior = 'auto';
+                    // Hide scrollbar visually
+                    container.style.scrollbarWidth = 'none'; // Firefox
+                    container.style.msOverflowStyle = 'none'; // IE/Edge
+                    const style = document.createElement('style');
+                    style.innerHTML = '#carousel-track-container::-webkit-scrollbar { display: none; }'; // Chrome/Safari
+                    document.head.appendChild(style);
+                    
+                    window.renderCarousel();
 
                     // Drag to scroll logic
                     let isDown = false;
