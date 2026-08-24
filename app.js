@@ -10,6 +10,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Dropdown mobile toggle
+    const dropdownBtn = document.querySelector('.dropdown > a');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    if (dropdownBtn && dropdownContent) {
+        dropdownBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            dropdownContent.classList.toggle('show-mobile');
+        });
+    }
+    
     // Dynamic Hero Loading (carga rápida inicial con lo local)
     const heroImg = document.getElementById('main-hero-img');
     if (heroImg) {
@@ -121,4 +131,48 @@ async function cargarConfigDesdeNube() {
     }
 }
 
+// =========================================
+// 1. SCROLL-DRIVEN ANIMATIONS
+// =========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Add reveal class to cards if they don't have it
+    const elementsToReveal = document.querySelectorAll('.card, .experience-card, .plantel-card, .vocational-card, .test-container, .form-container');
+    elementsToReveal.forEach(el => {
+        el.classList.add('reveal');
+    });
 
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+    });
+
+    // =========================================
+    // 4. SKELETON LOADERS PARA IMÁGENES
+    // =========================================
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        // If image is already loaded, skip
+        if (img.complete) return;
+        
+        img.classList.add('skeleton-bg');
+        img.addEventListener('load', () => {
+            img.classList.remove('skeleton-bg');
+        });
+        img.addEventListener('error', () => {
+            img.classList.remove('skeleton-bg');
+        });
+    });
+});

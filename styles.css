@@ -49,7 +49,7 @@ body {
 }
 
 .brand {
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 2vw + 0.5rem, 1.5rem);
   font-weight: 700;
   color: var(--unifreire-yellow);
   letter-spacing: 1px;
@@ -58,8 +58,8 @@ body {
 .nav-links a {
   color: var(--text-primary);
   text-decoration: none;
-  margin-left: 2rem;
   font-weight: 500;
+  white-space: nowrap;
   transition: var(--transition-smooth);
 }
 
@@ -134,7 +134,7 @@ body {
 }
 
 .hero-content h1 {
-  font-size: 4.5rem;
+  font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(to right, #fff, var(--unifreire-yellow));
@@ -144,7 +144,7 @@ body {
 }
 
 .hero-content p {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.2rem);
   color: var(--text-secondary);
   margin-bottom: 2rem;
   max-width: 600px;
@@ -224,7 +224,7 @@ body {
 }
 
 .card-title {
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 2vw + 0.5rem, 1.5rem);
   font-weight: 600;
   margin-bottom: 1rem;
   z-index: 1;
@@ -292,7 +292,7 @@ body {
     border-left: 1px solid var(--glass-border);
   }
   .nav-links.active { right: 0; }
-  .nav-links a { margin: 1rem 0 !important; font-size: 1.2rem; }
+  .nav-links a { margin: 1rem 0 !important; font-size: clamp(1rem, 1.5vw + 0.5rem, 1.2rem); }
   
   .hero-content h1 { font-size: 2.2rem; }
   .navbar { padding: 1rem 5%; }
@@ -300,7 +300,7 @@ body {
   .filter-btn { padding: 0.4rem 1rem; font-size: 0.85rem; }
   .grid-container { grid-template-columns: 1fr; gap: 1.5rem; padding: 0 5% 3rem 5%; }
   .card { padding: 1.5rem; }
-  .card-title { font-size: 1.2rem; }
+  .card-title { font-size: clamp(1rem, 1.5vw + 0.5rem, 1.2rem); }
   .hero-actions { display: flex; flex-direction: column; gap: 1rem; padding: 0 2rem; }
   .hero-actions a { margin-left: 0 !important; width: 100%; }
   .btn-primary, .btn-accent { padding: 0.8rem 1rem; font-size: 0.9rem; width: 100%; box-sizing: border-box; text-align: center; }
@@ -396,7 +396,7 @@ body {
     color: var(--unifreire-green-light);
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 1.5vw + 0.5rem, 1.2rem);
 }
 .promo-card ul {
     list-style-type: none;
@@ -655,4 +655,52 @@ body {
 }
 .dropdown:hover .dropdown-content {
     display: block;
+}
+.dropdown-content.show-mobile {
+    display: block !important;
+}
+
+/* =========================================
+   NUEVAS IMPLEMENTACIONES: ANIMACIONES Y VIEW TRANSITIONS
+   ========================================= */
+
+/* 1. Scroll-Driven Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 4. Esqueletos de Carga (Skeleton Loaders) */
+.skeleton-bg {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+    animation: skeletonGlow 1.5s infinite;
+}
+@keyframes skeletonGlow {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* 5. Transiciones de Página Fluidas */
+@view-transition {
+    navigation: auto;
+}
+::view-transition-old(root) {
+    animation: fade-out 0.3s ease-out forwards;
+}
+::view-transition-new(root) {
+    animation: fade-in 0.3s ease-in forwards;
+}
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }

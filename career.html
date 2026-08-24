@@ -12,13 +12,14 @@
     </script>
 
     <meta charset="UTF-8">
+    <meta name="view-transition" content="same-origin">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unifreire - ¡Tu puedes ser un Jaguar!</title>
-    <link rel="icon" href="assets/images/logo.png">
+    <link rel="icon" href="assets/images/logo.webp">
         <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
     <style>
         .career-hero {
             padding: 8rem 5% 4rem 5%;
@@ -153,7 +154,7 @@
 </head>
 <body>
     <nav class="navbar glass" style="padding: 1rem 5%;">
-        <a href="index.html" class="brand" style="text-decoration: none;"><img loading="lazy" src="assets/images/logo.png" alt="Unifreire" style="height: 40px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));"></a>
+        <a href="index.html" class="brand" style="text-decoration: none;"><img loading="lazy" src="assets/images/logo.webp" alt="Unifreire" style="height: 40px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));"></a>
         <button class="hamburger" id="hamburger-menu" aria-label="Abrir menú">
             <span></span><span></span><span></span>
         </button>
@@ -386,27 +387,7 @@
             // --- INJECTED DYNAMIC LOCALSTORAGE OVERRIDE LOGIC ---
             let override = {};
 
-            // FORCE WIPE TO APPLY NEW DEFAULTS
-            try {
-                const stored_v1 = localStorage.getItem('unifreire_careers_custom');
-                if (stored_v1) {
-                    let shouldWipe = false;
-                    const parsed = JSON.parse(stored_v1);
-                    // Check if it has old data for any career
-                    for (const key in parsed) {
-                        if (parsed[key].saltillo && typeof parsed[key].saltillo.costos === 'string') {
-                                                        if (parsed[key].saltillo.costos.includes('$1,500') || parsed[key].saltillo.costos.includes('Licenciaturas Costo:') || parsed[key].saltillo.modalidades.includes('Modalidades disponibles:')) {
-                                shouldWipe = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (shouldWipe) {
-                        localStorage.removeItem('unifreire_careers_custom');
-                        override = {}; // reset
-                    }
-                }
-            } catch(e) {}
+
 
             try {
                 const stored = localStorage.getItem('unifreire_careers_custom');

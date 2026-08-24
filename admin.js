@@ -12,6 +12,10 @@ function switchTab(tabId) {
     event.target.classList.add('active');
 }
 
+let allLeads = [];
+let currentPageLeads = 1;
+const LEADS_PER_PAGE = 50;
+
 async function loadLeads() {
     const tb = document.getElementById('leads-body');
     const displayCount = document.getElementById('lead-count');
@@ -20,11 +24,10 @@ async function loadLeads() {
 
     tb.innerHTML = `<tr><td colspan="5" style="text-align: center;">Cargando registros desde la nube...</td></tr>`;
 
-    let leads = [];
     // Load local leads first to ensure they are never lost
     const leadsRaw = localStorage.getItem('unifreire_leads');
     if (leadsRaw) {
-        try { leads = JSON.parse(leadsRaw); } catch(e) {}
+        try { allLeads = JSON.parse(leadsRaw); } catch(e) {}
     }
 
     try {
@@ -32,28 +35,45 @@ async function loadLeads() {
         const cloudLeads = await res.json();
         if (cloudLeads && Array.isArray(cloudLeads) && cloudLeads.length > 0) {
             // Merge cloud leads with local leads, avoiding exact duplicates (by email + date)
-            const existingKeys = new Set(leads.map(l => l.email + l.fecha));
+            const existingKeys = new Set(allLeads.map(l => l.email + l.fecha));
             cloudLeads.forEach(cl => {
                 if (!existingKeys.has(cl.email + cl.fecha)) {
-                    leads.push(cl);
+                    allLeads.push(cl);
                 }
             });
-            localStorage.setItem('unifreire_leads', JSON.stringify(leads));
+            localStorage.setItem('unifreire_leads', JSON.stringify(allLeads));
         }
     } catch(err) {
         console.error("Error cargando leads de la nube, usando locales", err);
     }
 
-    if (leads.length === 0) {
+    // Ordenar de más reciente a más antiguo
+    allLeads.reverse();
+    renderLeadsPage(1);
+
+    if(displayCount) displayCount.innerText = allLeads.length;
+    
+    const visitCountData = localStorage.getItem('unifreire_visit_count') || "0";
+    const displayVisit = document.getElementById('visit-count');
+    if(displayVisit) displayVisit.innerText = visitCountData;
+}
+
+function renderLeadsPage(page) {
+    currentPageLeads = page;
+    const tb = document.getElementById('leads-body');
+    if (!tb) return;
+
+    if (allLeads.length === 0) {
         tb.innerHTML = `<tr><td colspan="5" style="text-align: center;">No hay leads registrados aún.</td></tr>`;
         return;
     }
 
-    if(displayCount) displayCount.innerText = leads.length;
-    
+    const startIndex = (page - 1) * LEADS_PER_PAGE;
+    const endIndex = startIndex + LEADS_PER_PAGE;
+    const pageLeads = allLeads.slice(startIndex, endIndex);
+
     let html = '';
-    
-    leads.reverse().forEach(lead => {
+    pageLeads.forEach(lead => {
         const dateStr = lead.fecha ? new Date(lead.fecha).toLocaleDateString('es-MX', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
         html += `
             <tr>
@@ -65,12 +85,20 @@ async function loadLeads() {
             </tr>
         `;
     });
-    
+
+    // Paginación UI
+    const totalPages = Math.ceil(allLeads.length / LEADS_PER_PAGE);
+    if (totalPages > 1) {
+        html += `<tr><td colspan="5" style="text-align: center;">
+            <div style="margin-top:10px; display:flex; justify-content:center; gap: 10px;">
+                <button onclick="renderLeadsPage(${page > 1 ? page - 1 : 1})" ${page === 1 ? 'disabled' : ''} class="btn-primary" style="padding:0.4rem 1rem;">Anterior</button>
+                <span>Página ${page} de ${totalPages}</span>
+                <button onclick="renderLeadsPage(${page < totalPages ? page + 1 : totalPages})" ${page === totalPages ? 'disabled' : ''} class="btn-primary" style="padding:0.4rem 1rem;">Siguiente</button>
+            </div>
+        </td></tr>`;
+    }
+
     tb.innerHTML = html;
-    
-    const visitCountData = localStorage.getItem('unifreire_visit_count') || "0";
-    const displayVisit = document.getElementById('visit-count');
-    if(displayVisit) displayVisit.innerText = visitCountData;
 }
 
 function loadCareers() {
@@ -306,11 +334,22 @@ function exportExcel() {
 function limpiarYExportar() {
     exportExcel();
     
-    // Solo se borra visualmente como se solicitó
+    // Borrado definitivo
+    allLeads = [];
+    localStorage.removeItem('unifreire_leads');
+    
+    // Attempt to clear from Apps Script backend (optional, but requested for permanent wipe)
+    try {
+        fetch(GLOBAL_BACKEND_URL + "?action=limpiarLeads", { method: "POST", mode: "no-cors" });
+    } catch(e) {}
+
     const tb = document.getElementById('leads-body');
     if (tb) {
-        tb.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--unifreire-yellow);">La lista visual ha sido limpiada.<br><span style="font-size:0.8rem; color: #888;">Recarga la página para visualizar los registros nuevamente (los datos no han sido borrados de la base de datos).</span></td></tr>`;
+        tb.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--unifreire-yellow);">La lista ha sido limpiada y exportada definitivamente.</td></tr>`;
     }
+    
+    const displayCount = document.getElementById('lead-count');
+    if(displayCount) displayCount.innerText = "0";
 }
 
 // Carousel Logic
