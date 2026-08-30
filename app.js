@@ -1,4 +1,38 @@
+
+// =========================================
+// AES-256 ENCRYPTION PAYLOAD SECURE
+// =========================================
+const SECRET_KEY = "UNIFREIRE_SECURE_KEY_2026_!@#";
+function encryptPayload(jsonData) {
+    try {
+        const jsonString = JSON.stringify(jsonData);
+        // Cifrado AES-256 real
+        return CryptoJS.AES.encrypt(jsonString, SECRET_KEY).toString();
+    } catch(e) {
+        console.error("Error encriptando payload:", e);
+        return null;
+    }
+}
+function decryptPayload(encryptedData) {
+    try {
+        const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
+        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch(e) {
+        return null;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Contador de Visitas Global
+    let localVisits = parseInt(localStorage.getItem('unifreire_visit_count') || '0');
+    if (!sessionStorage.getItem('visited_this_session')) {
+        localVisits++;
+        localStorage.setItem('unifreire_visit_count', localVisits.toString());
+        sessionStorage.setItem('visited_this_session', 'true');
+        // Opcional: Enviar ping al servidor para conteo global
+        try { fetch(GLOBAL_BACKEND_URL + "?action=registrarVisita", { method: "POST", mode: "no-cors" }); } catch(e){}
+    }
+
     cargarConfigDesdeNube();
     
     // Hamburger Menu Logic
