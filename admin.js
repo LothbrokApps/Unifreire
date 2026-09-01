@@ -282,6 +282,50 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(renderCarouselA
 // --- Career Editor Logic ---
 let currentEditingCareerId = null;
 
+
+function loadCareers() {
+    const grid = document.getElementById('admin-careers-grid');
+    const bannerGrid = document.getElementById('admin-campanas-banners-grid');
+    if(!grid && !bannerGrid) return;
+    
+    let html = '';
+    let bannerHtml = '';
+    Object.values(CAREERS_DATA).forEach(c => {
+        // Admin tab
+        if(grid) {
+            html += `
+                <div class="card glass" style="min-height: 150px; padding: 1rem;">
+                    <div style="font-size: 0.8rem; color: var(--unifreire-yellow);">${c.type}</div>
+                    <h4 style="margin: 0.5rem 0;">${c.name}</h4>
+                    <div style="display:flex; gap:0.5rem; margin-top: 1rem;">
+                        <button class="btn-primary" style="padding: 0.3rem 0.5rem; font-size: 0.8rem;" onclick="openCareerEditor('${c.id}')">Editar Plan</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Banners tab
+        if(bannerGrid) {
+            bannerHtml += `
+                <div class="card glass" style="min-height: 150px; padding: 1rem;">
+                    <div style="font-size: 0.8rem; color: var(--unifreire-yellow);">${c.type}</div>
+                    <h4 style="margin: 0.5rem 0; font-size: 1.1rem;">${c.name}</h4>
+                    
+                    <div style="margin-top: 1rem;">
+                       <input type="text" id="url-${c.id}" placeholder="Enlace directo Google Drive" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--bg-dark); color: white; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                       <button class="btn-primary" style="width: 100%; font-size: 0.8rem; padding: 0.4rem;" onclick="updateCareerBanner('${c.id}')">Guardar Enlace</button>
+                    </div>
+                    <p id="msg-${c.id}" style="color: var(--unifreire-yellow); font-size: 0.8rem; margin-top: 0.5rem;"></p>
+                </div>
+            `;
+        }
+    });
+
+    if(grid) grid.innerHTML = html;
+    if(bannerGrid) bannerGrid.innerHTML = bannerHtml;
+}
+
+
 function openCareerEditor(careerId) {
     currentEditingCareerId = careerId;
     const c = CAREERS_DATA[careerId];
