@@ -1,10 +1,4 @@
 // =========================================
-// QUILL JS instances
-// =========================================
-let quillReqSaltillo, quillModSaltillo, quillCostSaltillo;
-let quillModMty, quillCostMty;
-
-// =========================================
 // AES-256 ENCRYPTION PAYLOAD SECURE
 // =========================================
 const SECRET_KEY = "UNIFREIRE_SECURE_KEY_2026_!@#";
@@ -22,37 +16,10 @@ function decryptPayload(encryptedData) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Inject custom CSS to fix Quill's default styles for dark mode
-    const style = document.createElement('style');
-    style.innerHTML = `
-        .ql-editor { min-height: 100px; color: white !important; font-family: inherit; font-size: inherit; }
-        .ql-editor p { margin-bottom: 0.5rem; }
-        .ql-editor ul { padding-left: 1.2rem; margin-bottom: 0; }
-        .ql-toolbar button { background: var(--unifreire-yellow) !important; color: black !important; border-radius: 3px !important; margin: 0 2px; }
-        .ql-toolbar svg { stroke: black; } 
-    `;
-    document.head.appendChild(style);
-
-    const getOptions = (id) => ({
-        theme: 'snow',
-        modules: {
-            toolbar: '#toolbar-' + id
-        }
-    });
-    
-    if (document.getElementById('ce-req-saltillo')) {
-        quillReqSaltillo = new Quill('#ce-req-saltillo', getOptions('ce-req-saltillo'));
-        quillModSaltillo = new Quill('#ce-mod-saltillo', getOptions('ce-mod-saltillo'));
-        quillCostSaltillo = new Quill('#ce-cost-saltillo', getOptions('ce-cost-saltillo'));
-        quillModMty = new Quill('#ce-mod-mty', getOptions('ce-mod-mty'));
-        quillCostMty = new Quill('#ce-cost-mty', getOptions('ce-cost-mty'));
-    }
-
-    if (typeof loadLeads === 'function') loadLeads();
-    if (typeof loadCareers === 'function') loadCareers();
-    if (typeof renderPlantelesAdmin === 'function') renderPlantelesAdmin();
+    loadLeads();
+    loadCareers();
+    renderPlantelesAdmin();
 });
-
 
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -61,7 +28,6 @@ function switchTab(tabId) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     event.target.classList.add('active');
 }
-
 
 let currentPage = 1;
 const itemsPerPage = 50;
@@ -133,13 +99,14 @@ function renderLeadsPage() {
     if (totalPages > 1) {
         let tr = document.createElement('tr');
         tr.innerHTML = `<td colspan="5" style="text-align: center; padding: 1rem;">
-            <button onclick="if(currentPage > 1) { currentPage--; renderLeadsPage(); }" style="padding: 0.5rem; background: var(--unifreire-yellow); border: none; cursor: pointer; margin-right: 10px;">Anterior</button>
-            Página ${currentPage} de ${totalPages}
-            <button onclick="if(currentPage < ${totalPages}) { currentPage++; renderLeadsPage(); }" style="padding: 0.5rem; background: var(--unifreire-yellow); border: none; cursor: pointer; margin-left: 10px;">Siguiente</button>
+            <button onclick="if(currentPage > 1) { currentPage--; renderLeadsPage(); }" style="padding: 0.5rem; background: var(--unifreire-yellow); color: black; border: none; cursor: pointer; margin-right: 10px; border-radius: 4px;">Anterior</button>
+            <span style="color: white;">Página ${currentPage} de ${totalPages}</span>
+            <button onclick="if(currentPage < ${totalPages}) { currentPage++; renderLeadsPage(); }" style="padding: 0.5rem; background: var(--unifreire-yellow); color: black; border: none; cursor: pointer; margin-left: 10px; border-radius: 4px;">Siguiente</button>
         </td>`;
         tbody.appendChild(tr);
     }
 }
+
 
 async function guardarConfigEnNube(llave, valor, msgElement) {
     if(msgElement) msgElement.innerText = "Guardando en la nube... espera.";
@@ -310,38 +277,7 @@ function addCarouselUrl() {
     guardarConfigEnNube('unifreire_carousel_images', JSON.stringify(pics), msg);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Inject custom CSS to fix Quill's default styles for dark mode
-    const style = document.createElement('style');
-    style.innerHTML = `
-        .ql-editor { min-height: 100px; color: white !important; font-family: inherit; font-size: inherit; }
-        .ql-editor p { margin-bottom: 0.5rem; }
-        .ql-editor ul { padding-left: 1.2rem; margin-bottom: 0; }
-        .ql-toolbar button { background: var(--unifreire-yellow) !important; color: black !important; border-radius: 3px !important; margin: 0 2px; }
-        .ql-toolbar svg { stroke: black; } 
-    `;
-    document.head.appendChild(style);
-
-    const getOptions = (id) => ({
-        theme: 'snow',
-        modules: {
-            toolbar: '#toolbar-' + id
-        }
-    });
-    
-    if (document.getElementById('ce-req-saltillo')) {
-        quillReqSaltillo = new Quill('#ce-req-saltillo', getOptions('ce-req-saltillo'));
-        quillModSaltillo = new Quill('#ce-mod-saltillo', getOptions('ce-mod-saltillo'));
-        quillCostSaltillo = new Quill('#ce-cost-saltillo', getOptions('ce-cost-saltillo'));
-        quillModMty = new Quill('#ce-mod-mty', getOptions('ce-mod-mty'));
-        quillCostMty = new Quill('#ce-cost-mty', getOptions('ce-cost-mty'));
-    }
-
-    if (typeof loadLeads === 'function') loadLeads();
-    if (typeof loadCareers === 'function') loadCareers();
-    if (typeof renderPlantelesAdmin === 'function') renderPlantelesAdmin();
-});
-
+document.addEventListener('DOMContentLoaded', () => { setTimeout(renderCarouselAdmin, 200); });
 
 // --- Career Editor Logic ---
 let currentEditingCareerId = null;
@@ -368,15 +304,13 @@ function openCareerEditor(careerId) {
     document.getElementById('ce-flag-saltillo').checked = custom.availableSaltillo !== false;
     document.getElementById('ce-flag-mty').checked = custom.availableMonterrey !== false;
 
-    
     // Default HTML blocks if custom is not set
-    if(document.getElementById('ce-req-saltillo')) quillReqSaltillo.root.innerHTML = (custom.saltillo ? custom.saltillo.requisitos : null) || `<p style="margin-bottom: 0.5rem; margin-top: 1rem;">Para realizar tu inscripción necesitas:</p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Acta de Nacimiento</li><li>Certificado de Bachillerato</li><li>Carta de Autenticidad</li><li>CURP</li><li>Pago del Seguro Facultativo</li><li>Comprobante de Domicilio</li><li>Identificación Oficial (INE)</li></ul>`;
-    if(document.getElementById('ce-mod-saltillo')) quillModSaltillo.root.innerHTML = (custom.saltillo ? custom.saltillo.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>Matutino:</b> 7:00 am a 10:00 am</li><li><b>Vespertino:</b> 6:00 pm a 9:00 pm</li><li><b>Intermedio:</b> 10:30 am a 1:30 pm</li><li><b>Turno Mixto:</b> Sábado o Domingo 8:00 am a 3:00 pm</li></ul>`;
-    if(document.getElementById('ce-cost-saltillo')) quillCostSaltillo.root.innerHTML = (custom.saltillo ? custom.saltillo.costos : null) || `<p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Licenciaturas:</b></p><ul style="margin-bottom: 1rem; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $1,820</li><li>Mixto (Sábado y Domingo) $1,920</li></ul><p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Ingenierías:</b></p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $2,100</li><li>Mixto (Sábado y Domingo) $2,200</li></ul>`;
+    if(document.getElementById('ce-req-saltillo')) document.getElementById('ce-req-saltillo').innerHTML = (custom.saltillo ? custom.saltillo.requisitos : null) || `<p style="margin-bottom: 0.5rem; margin-top: 1rem;">Para realizar tu inscripción necesitas:</p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Acta de Nacimiento</li><li>Certificado de Bachillerato</li><li>Carta de Autenticidad</li><li>CURP</li><li>Pago del Seguro Facultativo</li><li>Comprobante de Domicilio</li><li>Identificación Oficial (INE)</li></ul>`;
+    if(document.getElementById('ce-mod-saltillo')) document.getElementById('ce-mod-saltillo').innerHTML = (custom.saltillo ? custom.saltillo.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>Matutino:</b> 7:00 am a 10:00 am</li><li><b>Vespertino:</b> 6:00 pm a 9:00 pm</li><li><b>Intermedio:</b> 10:30 am a 1:30 pm</li><li><b>Turno Mixto:</b> Sábado o Domingo 8:00 am a 3:00 pm</li></ul>`;
+    if(document.getElementById('ce-cost-saltillo')) document.getElementById('ce-cost-saltillo').innerHTML = (custom.saltillo ? custom.saltillo.costos : null) || `<p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Licenciaturas:</b></p><ul style="margin-bottom: 1rem; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $1,820</li><li>Mixto (Sábado y Domingo) $1,920</li></ul><p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Ingenierías:</b></p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $2,100</li><li>Mixto (Sábado y Domingo) $2,200</li></ul>`;
 
-    if(document.getElementById('ce-mod-mty')) quillModMty.root.innerHTML = (custom.monterrey ? custom.monterrey.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>MATUTINO:</b> LUNES A VIERNES 8:00AM A 11:00AM</li><li><b>SABATINO:</b> 8:00AM A 3:00PM</li><li><b>DOMINICAL:</b> 8:00AM A 3:00PM</li></ul>`;
-    if(document.getElementById('ce-cost-mty')) quillCostMty.root.innerHTML = (custom.monterrey ? custom.monterrey.costos : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Inscripción $2,000</li><li>Mensualidad $2,000</li><li>Cuota interna $500</li><li>Seguro facultativo $1,250</li></ul>`;
-
+    if(document.getElementById('ce-mod-mty')) document.getElementById('ce-mod-mty').innerHTML = (custom.monterrey ? custom.monterrey.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>MATUTINO:</b> LUNES A VIERNES 8:00AM A 11:00AM</li><li><b>SABATINO:</b> 8:00AM A 3:00PM</li><li><b>DOMINICAL:</b> 8:00AM A 3:00PM</li></ul>`;
+    if(document.getElementById('ce-cost-mty')) document.getElementById('ce-cost-mty').innerHTML = (custom.monterrey ? custom.monterrey.costos : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Inscripción $2,000</li><li>Mensualidad $2,000</li><li>Cuota interna $500</li><li>Seguro facultativo $1,250</li></ul>`;
 
     document.getElementById('careerEditorModal').style.display = 'flex';
 }
@@ -390,23 +324,21 @@ function saveCareerChanges() {
         if(stored) overrides = JSON.parse(stored);
     } catch(e) {}
 
-    
     overrides[currentEditingCareerId] = {
         name: document.getElementById('ce-title').value,
         description: document.getElementById('ce-desc').value,
         availableSaltillo: document.getElementById('ce-flag-saltillo').checked,
         availableMonterrey: document.getElementById('ce-flag-mty').checked,
         saltillo: {
-            requisitos: quillReqSaltillo.root.innerHTML,
-            modalidades: quillModSaltillo.root.innerHTML,
-            costos: quillCostSaltillo.root.innerHTML
+            requisitos: document.getElementById('ce-req-saltillo').innerHTML,
+            modalidades: document.getElementById('ce-mod-saltillo').innerHTML,
+            costos: document.getElementById('ce-cost-saltillo').innerHTML
         },
         monterrey: {
-            modalidades: quillModMty.root.innerHTML,
-            costos: quillCostMty.root.innerHTML
+            modalidades: document.getElementById('ce-mod-mty').innerHTML,
+            costos: document.getElementById('ce-cost-mty').innerHTML
         }
     };
-
 
     localStorage.setItem('unifreire_careers_custom', JSON.stringify(overrides));
     alert('Cambios guardados localmente. Al cargar la carrera se reflejará esta información.');
