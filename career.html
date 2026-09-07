@@ -613,11 +613,11 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
             <form id="becaForm" onsubmit="event.preventDefault(); submitBeca();">
                 <div style="margin-bottom: 1rem;">
                     <label>Nombre Completo</label>
-                    <input type="text" id="beca-nombre" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                    <input type="text" id="beca-nombre" required autocomplete="name" style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
                 </div>
                 <div style="margin-bottom: 1rem;">
                     <label>Teléfono / WhatsApp</label>
-                    <input type="tel" id="beca-telefono" required style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
+                    <input type="tel" id="beca-telefono" required autocomplete="tel" style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
                     <div style="margin-bottom: 1rem;">
@@ -680,7 +680,16 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
     </div>
     
     <script>
-        function submitBeca() {
+                function submitBeca() {
+            const nombre = document.getElementById('beca-nombre').value.trim();
+            const tel = document.getElementById('beca-telefono').value.trim();
+            const motivo = document.getElementById('beca-motivo').value.trim();
+            
+            if (!nombre || !tel || !motivo) {
+                alert("Sin tu información no podremos enviarte informacion completa de la carrera de tu interes, favor de rellenar cada seccion");
+                return;
+            }
+
             const btn = document.getElementById('btnBecaSubmit');
             btn.innerText = "Evaluando y generando documento...";
             btn.disabled = true;

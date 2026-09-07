@@ -49,7 +49,16 @@ async function loadLeads() {
 
     try {
         const res = await fetch(GLOBAL_BACKEND_URL + "?action=obtenerLeads");
-        const cloudLeads = await res.json();
+        const cloudText = await res.text();
+        
+        // Intentar descifrar si el servidor envió el JSON encriptado (AES-256)
+        let cloudLeads = decryptPayload(cloudText);
+        
+        // Si no está encriptado (retrocompatibilidad), parsear normal
+        if (!cloudLeads) {
+            try { cloudLeads = JSON.parse(cloudText); } catch(e) {}
+        }
+        
         if (cloudLeads && Array.isArray(cloudLeads) && cloudLeads.length > 0) {
             allLeads = cloudLeads;
             localStorage.setItem('unifreire_leads', JSON.stringify(allLeads));

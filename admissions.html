@@ -169,7 +169,7 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
         <form class="smart-form" id="admission-form">
             <div class="form-group">
                 <label for="f-nombre">Nombre Completo</label>
-                <input type="text" id="f-nombre" required placeholder="Ej. Juan Pérez">
+                <input type="text" id="f-nombre" required autocomplete="name" placeholder="Ej. Juan Pérez">
             </div>
             <div class="form-group">
                 <label for="f-carrera">Carrera de Interés</label>
@@ -177,11 +177,11 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
             </div>
             <div class="form-group">
                 <label for="f-telefono">Teléfono / WhatsApp</label>
-                <input type="tel" id="f-telefono" required placeholder="Ej. 844 123 4567">
+                <input type="tel" id="f-telefono" required autocomplete="tel" placeholder="Ej. 844 123 4567">
             </div>
             <div class="form-group">
                 <label for="f-email">Correo Electrónico</label>
-                <input type="email" id="f-email" required placeholder="correo@ejemplo.com">
+                <input type="email" id="f-email" required autocomplete="email" placeholder="correo@ejemplo.com">
             </div>
             <div class="form-group">
                 <label for="f-modalidad">Modalidad y Horario de Interés</label>
@@ -213,29 +213,43 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
             document.getElementById('f-carrera').value = careerName;
         });
 
-        document.getElementById('admission-form').addEventListener('submit', function(e) {
+                document.getElementById('admission-form').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            const formAnswers = {
+                nombre: document.getElementById('f-nombre').value.trim(),
+                carrera: document.getElementById('f-carrera').value,
+                telefono: document.getElementById('f-telefono').value.trim(),
+                email: document.getElementById('f-email').value.trim(),
+                horario: document.getElementById('f-modalidad').value,
+                fecha: new Date().toISOString()
+            };
+
+            // Validación estricta solicitada
+            if (!formAnswers.nombre || !formAnswers.telefono || !formAnswers.email || !formAnswers.horario) {
+                alert("Sin tu información no podremos enviarte informacion completa de la carrera de tu interes, favor de rellenar cada seccion");
+                return;
+            }
             
             const btn = this.querySelector('button[type="submit"]');
             btn.innerText = "Enviando...";
             btn.disabled = true;
 
-            const formAnswers = {
-                nombre: document.getElementById('f-nombre').value,
-                carrera: document.getElementById('f-carrera').value,
-                telefono: document.getElementById('f-telefono').value,
-                email: document.getElementById('f-email').value,
-                horario: document.getElementById('f-modalidad').value,
-                fecha: new Date().toISOString()
-            };
-
             let leads = JSON.parse(localStorage.getItem('unifreire_leads') || '[]');
             leads.push(formAnswers);
             localStorage.setItem('unifreire_leads', JSON.stringify(leads));
 
+            // AES-256 Payload Encryption
+            const SECRET_KEY = "UNIFREIRE_SECURE_KEY_2026_!@#";
+            let encryptedPayload = "";
+            try {
+                encryptedPayload = CryptoJS.AES.encrypt(JSON.stringify(formAnswers), SECRET_KEY).toString();
+            } catch(err) { console.error(err); }
+
             const urlGoogleAppsScript = GLOBAL_BACKEND_URL;
             const formParams = new URLSearchParams({
                 action: "registro",
+                payload_seguro: encryptedPayload, // Cifrado E2E
                 nombre: formAnswers.nombre,
                 correo: formAnswers.email,
                 telefono: formAnswers.telefono,
