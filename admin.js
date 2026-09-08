@@ -188,13 +188,7 @@ async function guardarConfigEnNube(llave, valor, msgElement) {
     setTimeout(() => { if(msgElement) msgElement.innerText=""; }, 3000);
 }
 
-function updateHeroBanner() {
-    const msg = document.getElementById('hero-banner-msg');
-    const url = document.getElementById('hero-url-input').value.trim();
-    if(!url) { msg.innerText = "Ingresa un enlace."; return; }
-    localStorage.setItem('unifreire_hero_banner', url);
-    guardarConfigEnNube('unifreire_hero_banner', url, msg);
-}
+
 
 function updateCareerBanner(id) {
     const msg = document.getElementById(`msg-${id}`);
@@ -604,4 +598,68 @@ function deletePlantel() {
     localStorage.setItem('unifreire_planteles_custom', JSON.stringify(planteles));
     renderPlantelesAdmin();
     document.getElementById('plantelEditorModal').style.display = 'none';
+}
+
+
+// =========================================
+// HERO BANNER ADJUSTER
+// =========================================
+let heroAdjustUrl = "";
+
+function openHeroAdjuster() {
+    const url = document.getElementById('hero-url-input').value.trim();
+    if(!url) {
+        document.getElementById('hero-banner-msg').innerText = "Ingresa un enlace."; 
+        return; 
+    }
+    heroAdjustUrl = url;
+    
+    document.getElementById('scale-z').value = 100;
+    document.getElementById('pos-x').value = 50;
+    document.getElementById('pos-y').value = 50;
+    
+    const preview = document.getElementById('img-preview');
+    preview.style.backgroundImage = `url(${url})`;
+    preview.style.backgroundSize = "100%";
+    preview.style.backgroundPosition = "50% 50%";
+    
+    document.getElementById('image-modal').style.display = 'flex';
+}
+
+function updatePreviewStyle() {
+    const z = document.getElementById('scale-z').value;
+    const x = document.getElementById('pos-x').value;
+    const y = document.getElementById('pos-y').value;
+    
+    const preview = document.getElementById('img-preview');
+    preview.style.backgroundSize = `${z}%`;
+    preview.style.backgroundPosition = `${x}% ${y}%`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('scale-z')?.addEventListener('input', updatePreviewStyle);
+    document.getElementById('pos-x')?.addEventListener('input', updatePreviewStyle);
+    document.getElementById('pos-y')?.addEventListener('input', updatePreviewStyle);
+});
+
+function saveImageSetup() {
+    const scale = document.getElementById('scale-z').value / 100;
+    const x = document.getElementById('pos-x').value;
+    const y = document.getElementById('pos-y').value;
+    
+    const config = {
+        url: heroAdjustUrl,
+        scale: scale,
+        position: `${x}% ${y}%`
+    };
+    
+    localStorage.setItem('unifreire_hero_banner', JSON.stringify(config));
+    document.getElementById('image-modal').style.display = 'none';
+    const msg = document.getElementById('hero-banner-msg');
+    msg.innerText = "Hero Banner ajustado y guardado exitosamente.";
+    
+    // Attempt saving to cloud if that function exists
+    if(typeof guardarConfigEnNube === 'function') {
+        guardarConfigEnNube('unifreire_hero_banner', JSON.stringify(config), msg);
+    }
 }

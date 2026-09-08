@@ -58,7 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroImg = document.getElementById('main-hero-img');
     if (heroImg) {
         const savedHero = localStorage.getItem('unifreire_hero_banner');
-        if (savedHero) heroImg.src = savedHero;
+        if (savedHero) {
+            try {
+                const config = JSON.parse(savedHero);
+                heroImg.src = config.url;
+                heroImg.style.objectPosition = config.position;
+                heroImg.style.transform = `scale(${config.scale})`;
+            } catch(e) {
+                heroImg.src = savedHero;
+            }
+        }
     }
 
     const grid = document.getElementById('careers-grid');
@@ -134,11 +143,26 @@ async function cargarConfigDesdeNube() {
         }
         
         if (config.hero_banner) {
-            const finalUrl = getDirectUrl(config.hero_banner);
-            localStorage.setItem('unifreire_hero_banner', finalUrl);
+            let configObj = null;
+            let finalUrl = "";
+            try {
+                configObj = JSON.parse(config.hero_banner);
+                finalUrl = configObj.url;
+            } catch(e) {
+                finalUrl = getDirectUrl(config.hero_banner);
+            }
+            
+            localStorage.setItem('unifreire_hero_banner', typeof config.hero_banner === 'string' && config.hero_banner.includes('{') ? config.hero_banner : finalUrl);
+            
             const heroImg = document.getElementById('main-hero-img');
-            if (heroImg && heroImg.src !== finalUrl) {
-                heroImg.src = finalUrl;
+            if (heroImg) {
+                if(configObj) {
+                    if (heroImg.src !== configObj.url) heroImg.src = configObj.url;
+                    heroImg.style.objectPosition = configObj.position;
+                    heroImg.style.transform = `scale(${configObj.scale})`;
+                } else {
+                    if (heroImg.src !== finalUrl) heroImg.src = finalUrl;
+                }
             }
         }
         
