@@ -23,10 +23,54 @@ function decryptPayload(encryptedData) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initial Data Loads
     loadLeads();
-    loadCareers();
-    renderPlantelesAdmin();
+    if (typeof loadCareers === 'function') loadCareers();
+    if (typeof renderPlantelesAdmin === 'function') renderPlantelesAdmin();
+    
+    // 2. Load Visit Stats
+    const visitCounter = document.getElementById('admin-visit-count');
+    if (visitCounter) {
+        let localVisits = localStorage.getItem('unifreire_visit_count') || '0';
+        visitCounter.innerText = parseInt(localVisits).toLocaleString();
+    }
+
+    // 3. Initialize Quill JS correctly
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .ql-editor { min-height: 120px; color: white !important; font-family: 'Poppins', sans-serif; font-size: 1rem; }
+        .ql-editor p { margin-bottom: 0.5rem; }
+        .ql-editor ul { padding-left: 1.2rem; margin-bottom: 0; }
+        .ql-toolbar.ql-snow { background: #f1f1f1 !important; border-radius: 4px 4px 0 0; border-color: rgba(255,255,255,0.2) !important; }
+        .ql-container.ql-snow { border-radius: 0 0 4px 4px; border-color: rgba(255,255,255,0.2) !important; }
+    `;
+    document.head.appendChild(style);
+
+    const quillOptions = {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'color': [] }, { 'background': [] }],
+                ['clean']
+            ]
+        }
+    };
+    
+    try {
+        if (typeof Quill !== 'undefined' && document.getElementById('ce-req-saltillo') && !document.querySelector('#ce-req-saltillo .ql-editor')) {
+            quillReqSaltillo = new Quill('#ce-req-saltillo', quillOptions);
+            quillModSaltillo = new Quill('#ce-mod-saltillo', quillOptions);
+            quillCostSaltillo = new Quill('#ce-cost-saltillo', quillOptions);
+            quillModMty = new Quill('#ce-mod-mty', quillOptions);
+            quillCostMty = new Quill('#ce-cost-mty', quillOptions);
+        }
+    } catch(err) {
+        console.error("Error inicializando Quill", err);
+    }
 });
+
 
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -293,7 +337,55 @@ function addCarouselUrl() {
     guardarConfigEnNube('unifreire_carousel_images', JSON.stringify(pics), msg);
 }
 
-document.addEventListener('DOMContentLoaded', () => { setTimeout(renderCarouselAdmin, 200); });
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initial Data Loads
+    loadLeads();
+    if (typeof loadCareers === 'function') loadCareers();
+    if (typeof renderPlantelesAdmin === 'function') renderPlantelesAdmin();
+    
+    // 2. Load Visit Stats
+    const visitCounter = document.getElementById('admin-visit-count');
+    if (visitCounter) {
+        let localVisits = localStorage.getItem('unifreire_visit_count') || '0';
+        visitCounter.innerText = parseInt(localVisits).toLocaleString();
+    }
+
+    // 3. Initialize Quill JS correctly
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .ql-editor { min-height: 120px; color: white !important; font-family: 'Poppins', sans-serif; font-size: 1rem; }
+        .ql-editor p { margin-bottom: 0.5rem; }
+        .ql-editor ul { padding-left: 1.2rem; margin-bottom: 0; }
+        .ql-toolbar.ql-snow { background: #f1f1f1 !important; border-radius: 4px 4px 0 0; border-color: rgba(255,255,255,0.2) !important; }
+        .ql-container.ql-snow { border-radius: 0 0 4px 4px; border-color: rgba(255,255,255,0.2) !important; }
+    `;
+    document.head.appendChild(style);
+
+    const quillOptions = {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'color': [] }, { 'background': [] }],
+                ['clean']
+            ]
+        }
+    };
+    
+    try {
+        if (typeof Quill !== 'undefined' && document.getElementById('ce-req-saltillo') && !document.querySelector('#ce-req-saltillo .ql-editor')) {
+            quillReqSaltillo = new Quill('#ce-req-saltillo', quillOptions);
+            quillModSaltillo = new Quill('#ce-mod-saltillo', quillOptions);
+            quillCostSaltillo = new Quill('#ce-cost-saltillo', quillOptions);
+            quillModMty = new Quill('#ce-mod-mty', quillOptions);
+            quillCostMty = new Quill('#ce-cost-mty', quillOptions);
+        }
+    } catch(err) {
+        console.error("Error inicializando Quill", err);
+    }
+});
+
 
 // --- Career Editor Logic ---
 let currentEditingCareerId = null;
@@ -366,12 +458,17 @@ function openCareerEditor(careerId) {
 
 
     // Default HTML blocks if custom is not set
-    if(quillReqSaltillo) quillReqSaltillo.root.innerHTML = (custom.saltillo ? custom.saltillo.requisitos : null) || `<p style="margin-bottom: 0.5rem; margin-top: 1rem;">Para realizar tu inscripción necesitas:</p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Acta de Nacimiento</li><li>Certificado de Bachillerato</li><li>Carta de Autenticidad</li><li>CURP</li><li>Pago del Seguro Facultativo</li><li>Comprobante de Domicilio</li><li>Identificación Oficial (INE)</li></ul>`;
-    if(quillModSaltillo) quillModSaltillo.root.innerHTML = (custom.saltillo ? custom.saltillo.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>Matutino:</b> 7:00 am a 10:00 am</li><li><b>Vespertino:</b> 6:00 pm a 9:00 pm</li><li><b>Intermedio:</b> 10:30 am a 1:30 pm</li><li><b>Turno Mixto:</b> Sábado o Domingo 8:00 am a 3:00 pm</li></ul>`;
-    if(quillCostSaltillo) quillCostSaltillo.root.innerHTML = (custom.saltillo ? custom.saltillo.costos : null) || `<p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Licenciaturas:</b></p><ul style="margin-bottom: 1rem; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $1,820</li><li>Mixto (Sábado y Domingo) $1,920</li></ul><p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Ingenierías:</b></p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $2,100</li><li>Mixto (Sábado y Domingo) $2,200</li></ul>`;
+    const reqS = (custom.saltillo ? custom.saltillo.requisitos : null) || `<p style="margin-bottom: 0.5rem; margin-top: 1rem;">Para realizar tu inscripción necesitas:</p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Acta de Nacimiento</li><li>Certificado de Bachillerato</li><li>Carta de Autenticidad</li><li>CURP</li><li>Pago del Seguro Facultativo</li><li>Comprobante de Domicilio</li><li>Identificación Oficial (INE)</li></ul>`;
+    const modS = (custom.saltillo ? custom.saltillo.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>Matutino:</b> 7:00 am a 10:00 am</li><li><b>Vespertino:</b> 6:00 pm a 9:00 pm</li><li><b>Intermedio:</b> 10:30 am a 1:30 pm</li><li><b>Turno Mixto:</b> Sábado o Domingo 8:00 am a 3:00 pm</li></ul>`;
+    const costS = (custom.saltillo ? custom.saltillo.costos : null) || `<p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Licenciaturas:</b></p><ul style="margin-bottom: 1rem; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $1,820</li><li>Mixto (Sábado y Domingo) $1,920</li></ul><p style="margin-bottom: 0.5rem; color: var(--unifreire-yellow);"><b>Ingenierías:</b></p><ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Escolarizados (Lunes a Viernes) $2,100</li><li>Mixto (Sábado y Domingo) $2,200</li></ul>`;
+    const modM = (custom.monterrey ? custom.monterrey.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>MATUTINO:</b> LUNES A VIERNES 8:00AM A 11:00AM</li><li><b>SABATINO:</b> 8:00AM A 3:00PM</li><li><b>DOMINICAL:</b> 8:00AM A 3:00PM</li></ul>`;
+    const costM = (custom.monterrey ? custom.monterrey.costos : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Inscripción $2,000</li><li>Mensualidad $2,000</li><li>Cuota interna $500</li><li>Seguro facultativo $1,250</li></ul>`;
 
-    if(quillModMty) quillModMty.root.innerHTML = (custom.monterrey ? custom.monterrey.modalidades : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li><b>MATUTINO:</b> LUNES A VIERNES 8:00AM A 11:00AM</li><li><b>SABATINO:</b> 8:00AM A 3:00PM</li><li><b>DOMINICAL:</b> 8:00AM A 3:00PM</li></ul>`;
-    if(quillCostMty) quillCostMty.root.innerHTML = (custom.monterrey ? custom.monterrey.costos : null) || `<ul style="margin-bottom: 0; padding-left: 1.2rem;"><li>Inscripción $2,000</li><li>Mensualidad $2,000</li><li>Cuota interna $500</li><li>Seguro facultativo $1,250</li></ul>`;
+    if(quillReqSaltillo) quillReqSaltillo.root.innerHTML = reqS; else document.getElementById('ce-req-saltillo').innerHTML = reqS;
+    if(quillModSaltillo) quillModSaltillo.root.innerHTML = modS; else document.getElementById('ce-mod-saltillo').innerHTML = modS;
+    if(quillCostSaltillo) quillCostSaltillo.root.innerHTML = costS; else document.getElementById('ce-cost-saltillo').innerHTML = costS;
+    if(quillModMty) quillModMty.root.innerHTML = modM; else document.getElementById('ce-mod-mty').innerHTML = modM;
+    if(quillCostMty) quillCostMty.root.innerHTML = costM; else document.getElementById('ce-cost-mty').innerHTML = costM;
 
     document.getElementById('careerEditorModal').style.display = 'flex';
 
@@ -392,13 +489,13 @@ function saveCareerChanges() {
         availableSaltillo: document.getElementById('ce-flag-saltillo').checked,
         availableMonterrey: document.getElementById('ce-flag-mty').checked,
         saltillo: {
-            requisitos: quillReqSaltillo.root.innerHTML,
-            modalidades: quillModSaltillo.root.innerHTML,
-            costos: quillCostSaltillo.root.innerHTML
+            requisitos: quillReqSaltillo ? quillReqSaltillo.root.innerHTML : document.getElementById('ce-req-saltillo').innerHTML,
+            modalidades: quillModSaltillo ? quillModSaltillo.root.innerHTML : document.getElementById('ce-mod-saltillo').innerHTML,
+            costos: quillCostSaltillo ? quillCostSaltillo.root.innerHTML : document.getElementById('ce-cost-saltillo').innerHTML
         },
         monterrey: {
-            modalidades: quillModMty.root.innerHTML,
-            costos: quillCostMty.root.innerHTML
+            modalidades: quillModMty ? quillModMty.root.innerHTML : document.getElementById('ce-mod-mty').innerHTML,
+            costos: quillCostMty ? quillCostMty.root.innerHTML : document.getElementById('ce-cost-mty').innerHTML
         }
     };
 
