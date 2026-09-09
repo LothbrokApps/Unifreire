@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLeads();
     if (typeof loadCareers === 'function') loadCareers();
     if (typeof renderPlantelesAdmin === 'function') renderPlantelesAdmin();
+    if (typeof renderCarouselAdmin === 'function') renderCarouselAdmin();
     
     // 2. Load Visit Stats
     const visitCounter = document.getElementById('admin-visit-count');
@@ -344,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLeads();
     if (typeof loadCareers === 'function') loadCareers();
     if (typeof renderPlantelesAdmin === 'function') renderPlantelesAdmin();
+    if (typeof renderCarouselAdmin === 'function') renderCarouselAdmin();
     
     // 2. Load Visit Stats
     const visitCounter = document.getElementById('admin-visit-count');
