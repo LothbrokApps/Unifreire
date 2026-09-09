@@ -377,11 +377,13 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
 
     <!-- Career Editor Modal -->
     <div id="careerEditorModal" style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center;">
-        <div class="card glass" style="width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
-            <span onclick="document.getElementById('careerEditorModal').style.display='none';" style="position:absolute; top:15px; right:20px; color:#f1f1f1; font-size:30px; font-weight:bold; cursor:pointer;">&times;</span>
-            <h2 style="color: var(--unifreire-yellow); margin-bottom: 1rem;">Editar Carrera: <span id="ce-career-id"></span></h2>
+        <div class="card glass" style="width: 98%; max-width: 1300px; max-height: 95vh; overflow-y: hidden; padding: 2rem; position: relative; display: flex; flex-direction: column;">
+            <span onclick="document.getElementById('careerEditorModal').style.display='none';" style="position:absolute; top:15px; right:20px; color:#f1f1f1; font-size:30px; font-weight:bold; cursor:pointer; z-index: 100;">&times;</span>
+            <h2 style="color: var(--unifreire-yellow); margin-bottom: 1rem; flex-shrink: 0;">Editar Carrera: <span id="ce-career-id"></span></h2>
             
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="display: flex; gap: 2rem; flex: 1; overflow: hidden;">
+                <!-- EDITOR COLUMN -->
+                <div style="flex: 1; overflow-y: auto; padding-right: 1rem; display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-content: start;">
                 <div style="grid-column: 1 / -1;">
                     <label>Título de la Carrera</label>
                     <input type="text" id="ce-title" style="width: 100%; padding: 0.8rem; border-radius: 4px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white;">

@@ -46,6 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
+    document.getElementById('ce-title')?.addEventListener('input', syncLivePreview);
+    document.getElementById('ce-desc')?.addEventListener('input', syncLivePreview);
+
     const quillOptions = {
         theme: 'snow',
         modules: {
@@ -65,6 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
             quillCostSaltillo = new Quill('#ce-cost-saltillo', quillOptions);
             quillModMty = new Quill('#ce-mod-mty', quillOptions);
             quillCostMty = new Quill('#ce-cost-mty', quillOptions);
+            
+            [quillReqSaltillo, quillModSaltillo, quillCostSaltillo].forEach(q => {
+                q.on('text-change', syncLivePreview);
+            });
         }
     } catch(err) {
         console.error("Error inicializando Quill", err);
@@ -111,7 +118,8 @@ async function loadLeads() {
         }
         
         if (cloudLeads && Array.isArray(cloudLeads) && cloudLeads.length > 0) {
-            allLeads = cloudLeads;
+            // Filter ghost/anonymous leads that come from empty sheet rows
+            allLeads = cloudLeads.filter(lead => lead.nombre && lead.nombre.trim() !== "");
             localStorage.setItem('unifreire_leads', JSON.stringify(allLeads));
         }
     } catch(err) {
@@ -355,6 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
+    document.getElementById('ce-title')?.addEventListener('input', syncLivePreview);
+    document.getElementById('ce-desc')?.addEventListener('input', syncLivePreview);
+
     const quillOptions = {
         theme: 'snow',
         modules: {
@@ -374,6 +385,10 @@ document.addEventListener('DOMContentLoaded', () => {
             quillCostSaltillo = new Quill('#ce-cost-saltillo', quillOptions);
             quillModMty = new Quill('#ce-mod-mty', quillOptions);
             quillCostMty = new Quill('#ce-cost-mty', quillOptions);
+            
+            [quillReqSaltillo, quillModSaltillo, quillCostSaltillo].forEach(q => {
+                q.on('text-change', syncLivePreview);
+            });
         }
     } catch(err) {
         console.error("Error inicializando Quill", err);
@@ -465,6 +480,7 @@ function openCareerEditor(careerId) {
     if(quillCostMty) quillCostMty.root.innerHTML = costM; else document.getElementById('ce-cost-mty').innerHTML = costM;
 
     document.getElementById('careerEditorModal').style.display = 'flex';
+    syncLivePreview();
 
 }
 
@@ -494,6 +510,9 @@ function saveCareerChanges() {
     };
 
     localStorage.setItem('unifreire_careers_custom', JSON.stringify(overrides));
+    // Disparar limpiador de caché global (Cache Buster)
+    localStorage.setItem('unifreire_cache_version', Date.now().toString());
+
     alert('Cambios guardados localmente. Al cargar la carrera se reflejará esta información.');
     document.getElementById('careerEditorModal').style.display = 'none';
     renderCareersTab(); // Refresh list to show updated name
@@ -581,6 +600,9 @@ function savePlantel() {
     }
     
     localStorage.setItem('unifreire_planteles_custom', JSON.stringify(planteles));
+    // Disparar limpiador de caché global (Cache Buster)
+    localStorage.setItem('unifreire_cache_version', Date.now().toString());
+
     renderPlantelesAdmin();
     document.getElementById('plantelEditorModal').style.display = 'none';
     alert("Plantel guardado exitosamente. Se reflejará en la web automáticamente.");
@@ -596,6 +618,9 @@ function deletePlantel() {
     planteles.splice(index, 1);
     
     localStorage.setItem('unifreire_planteles_custom', JSON.stringify(planteles));
+    // Disparar limpiador de caché global (Cache Buster)
+    localStorage.setItem('unifreire_cache_version', Date.now().toString());
+
     renderPlantelesAdmin();
     document.getElementById('plantelEditorModal').style.display = 'none';
 }
@@ -654,6 +679,9 @@ function saveImageSetup() {
     };
     
     localStorage.setItem('unifreire_hero_banner', JSON.stringify(config));
+    // Disparar limpiador de caché global (Cache Buster)
+    localStorage.setItem('unifreire_cache_version', Date.now().toString());
+
     document.getElementById('image-modal').style.display = 'none';
     const msg = document.getElementById('hero-banner-msg');
     msg.innerText = "Hero Banner ajustado y guardado exitosamente.";
@@ -662,4 +690,16 @@ function saveImageSetup() {
     if(typeof guardarConfigEnNube === 'function') {
         guardarConfigEnNube('unifreire_hero_banner', JSON.stringify(config), msg);
     }
+}
+
+
+function syncLivePreview() {
+    const title = document.getElementById('ce-title').value;
+    const desc = document.getElementById('ce-desc').value;
+    document.getElementById('sim-title').innerText = title || 'Título Carrera';
+    document.getElementById('sim-desc').innerText = desc || 'Descripción';
+    
+    document.getElementById('sim-req').innerHTML = quillReqSaltillo ? quillReqSaltillo.root.innerHTML : document.getElementById('ce-req-saltillo').innerHTML;
+    document.getElementById('sim-mod').innerHTML = quillModSaltillo ? quillModSaltillo.root.innerHTML : document.getElementById('ce-mod-saltillo').innerHTML;
+    document.getElementById('sim-cost').innerHTML = quillCostSaltillo ? quillCostSaltillo.root.innerHTML : document.getElementById('ce-cost-saltillo').innerHTML;
 }

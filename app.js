@@ -61,11 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedHero) {
             try {
                 const config = JSON.parse(savedHero);
-                heroImg.src = config.url;
+                const cv = localStorage.getItem('unifreire_cache_version') || '';
+                heroImg.src = config.url + (config.url.includes('?') ? '&' : '?') + 'v=' + cv;
                 heroImg.style.objectPosition = config.position;
                 heroImg.style.transform = `scale(${config.scale})`;
             } catch(e) {
-                heroImg.src = savedHero;
+                const cv = localStorage.getItem('unifreire_cache_version') || '';
+                heroImg.src = savedHero + (savedHero.includes('?') ? '&' : '?') + 'v=' + cv;
             }
         }
     }
@@ -157,7 +159,9 @@ async function cargarConfigDesdeNube() {
             const heroImg = document.getElementById('main-hero-img');
             if (heroImg) {
                 if(configObj) {
-                    if (heroImg.src !== configObj.url) heroImg.src = configObj.url;
+                    const cv = localStorage.getItem('unifreire_cache_version') || '';
+                    const bustedUrl = configObj.url + (configObj.url.includes('?') ? '&' : '?') + 'v=' + cv;
+                    if (heroImg.src !== bustedUrl) heroImg.src = bustedUrl;
                     heroImg.style.objectPosition = configObj.position;
                     heroImg.style.transform = `scale(${configObj.scale})`;
                 } else {
