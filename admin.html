@@ -441,9 +441,36 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
                         
                         <div id="ce-cost-mty"  style="width: 100%; min-height: 100px; padding: 0.5rem; color: white; outline: none; word-wrap: break-word;"></div>
                     </div>
+                </div> <!-- End of grid-column: 1 / -1 -->
+            
+                <div style="grid-column: 1 / -1; margin-top: 1rem; display:flex; gap: 1rem;">
+                    <button class="btn-primary" onclick="saveCareerChanges()">Guardar y Publicar</button>
+                    <button class="btn-primary" style="background: #e74c3c;" onclick="document.getElementById('careerEditorModal').style.display='none'">Cancelar</button>
                 </div>
-            </div>
-            <button onclick="saveCareerChanges()" class="btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem; border: none; cursor: pointer;">Guardar Cambios</button>
+            </div> <!-- END EDITOR COLUMN -->
+
+            <!-- MOBILE SIMULATOR COLUMN -->
+            <div style="width: 360px; background: #ffffff; border-radius: 40px; border: 12px solid #222; height: 75vh; overflow-y: auto; color: #333; position: relative; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <div style="position: sticky; top: 0; background: #004d36; color: white; padding: 1.5rem 1rem 1rem 1rem; text-align: center; border-radius: 20px 20px 0 0; z-index: 10;">
+                    <h3 id="sim-title" style="margin: 0; font-size: 1.2rem;">Título Carrera</h3>
+                    <p id="sim-desc" style="margin: 0; font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">Descripción breve</p>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="background: #f1f1f1; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                        <h4 style="color: #004d36; margin-bottom: 0.5rem; font-size: 0.95rem;">Requisitos</h4>
+                        <div id="sim-req" style="font-size: 0.85rem; line-height: 1.4;"></div>
+                    </div>
+                    <div style="background: #f1f1f1; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                        <h4 style="color: #004d36; margin-bottom: 0.5rem; font-size: 0.95rem;">Modalidades</h4>
+                        <div id="sim-mod" style="font-size: 0.85rem; line-height: 1.4;"></div>
+                    </div>
+                    <div style="background: #f1f1f1; border-radius: 8px; padding: 1rem;">
+                        <h4 style="color: #004d36; margin-bottom: 0.5rem; font-size: 0.95rem;">Costos</h4>
+                        <div id="sim-cost" style="font-size: 0.85rem; line-height: 1.4;"></div>
+                    </div>
+                </div>
+            </div> <!-- END MOBILE SIMULATOR -->
+        </div> <!-- END FLEX ROW -->
         </div>
     </div>
 
