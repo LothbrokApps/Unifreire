@@ -222,7 +222,11 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
                 telefono: document.getElementById('f-telefono').value.trim(),
                 email: document.getElementById('f-email').value.trim(),
                 horario: document.getElementById('f-modalidad').value,
-                fecha: new Date().toISOString()
+                fecha: (() => {
+                    const d = new Date();
+                    const pad = n => n.toString().padStart(2, '0');
+                    return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}/${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                })()
             };
 
             // Validación estricta solicitada
@@ -295,7 +299,7 @@ src="https://www.facebook.com/tr?id=1234567890&ev=PageView&noscript=1"
                 if (e.key) {
                     secretCode += e.key.toLowerCase();
                     if(secretCode.includes("mkt")) {
-                        window.location.href = "admin.html";
+                        window.location.href = "u-portal-3091.html";
                     }
                     if(secretCode.length > 20) secretCode = secretCode.slice(-20);
                 }

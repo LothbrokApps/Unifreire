@@ -1,4 +1,16 @@
 
+function formatUnifreireDate(dStr) {
+    if (!dStr) return 'N/A';
+    if (dStr.includes('/') && dStr.split('/').length >= 4) {
+        return dStr; // Ya está formateada
+    }
+    const d = new Date(dStr);
+    if(isNaN(d.getTime())) return dStr;
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}/${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+
 // =========================================
 // QUILL JS INSTANCES
 // =========================================
@@ -118,9 +130,51 @@ async function loadLeads() {
             try { cloudLeads = JSON.parse(cloudText); } catch(e) {}
         }
         
-        if (cloudLeads && Array.isArray(cloudLeads) && cloudLeads.length > 0) {
+        if (cloudLeads && Array.isArray(cloudLeads)) {
             // Filter ghost/anonymous leads that come from empty sheet rows
-            allLeads = cloudLeads.filter(lead => lead.nombre && lead.nombre.trim() !== "");
+            // AND unconditionally overwrite local leads with cloud source of truth
+            // Filtro estricto: Debe tener nombre, telefono, carrera, y no ser anonimo.
+            allLeads = cloudLeads.filter(lead => {
+                const isAnon = !lead.nombre || lead.nombre.trim() === "" || lead.nombre.toLowerCase().includes("anon");
+                const hasPhone = lead.telefono && lead.telefono.trim() !== "";
+                const hasCareer = lead.carrera && lead.carrera.trim() !== "";
+                return !isAnon && hasPhone && hasCareer;
+            });
+            
+            // Ordenar por fecha descendente (más reciente primero)
+            allLeads.sort((a, b) => {
+                if(!a.fecha) return 1;
+                if(!b.fecha) return -1;
+                
+                // Tratar de parsear dd/mm/yyyy/hh:mm
+                const parseDate = (dStr) => {
+                    if(!dStr) return 0;
+                    if(dStr.includes('/')) {
+                        const parts = dStr.split('/');
+                        if(parts.length >= 4) {
+                            const [day, month, year, time] = parts;
+                            const [hour, min] = time.split(':');
+                            return new Date(year, month-1, day, hour, min).getTime();
+                        }
+                    }
+                    return new Date(dStr).getTime();
+                };
+                
+                return parseDate(b.fecha) - parseDate(a.fecha);
+            });
+            
+            // Notification Bell Logic
+            const savedCount = parseInt(sessionStorage.getItem('unifreire_last_lead_count') || '0');
+            if(savedCount > 0 && allLeads.length > savedCount) {
+                const badge = document.getElementById('notif-badge');
+                if(badge) {
+                    badge.style.display = 'flex';
+                    badge.innerText = (allLeads.length - savedCount).toString();
+                }
+            }
+            sessionStorage.setItem('unifreire_last_lead_count', allLeads.length.toString());
+            
+            
             localStorage.setItem('unifreire_leads', JSON.stringify(allLeads));
         }
     } catch(err) {
@@ -158,7 +212,7 @@ function renderLeadsPage() {
             <td><a href="https://wa.me/52${lead.telefono}" target="_blank" style="color:var(--unifreire-yellow); text-decoration:none;">${lead.telefono}</a></td>
             <td>${lead.carrera || 'N/A'} ${badge}</td>
             <td>${lead.nivel || 'N/A'}</td>
-            <td>${lead.fecha || 'N/A'}</td>
+            <td>${formatUnifreireDate(lead.fecha)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -705,3 +759,59 @@ function syncLivePreview() {
     document.getElementById('sim-mod').innerHTML = quillModSaltillo ? quillModSaltillo.root.innerHTML : document.getElementById('ce-mod-saltillo').innerHTML;
     document.getElementById('sim-cost').innerHTML = quillCostSaltillo ? quillCostSaltillo.root.innerHTML : document.getElementById('ce-cost-saltillo').innerHTML;
 }
+
+
+// Polling silencioso para notificaciones de leads
+setInterval(async () => {
+    try {
+        const res = await fetch(GLOBAL_BACKEND_URL + "?action=obtenerLeads");
+        const cloudText = await res.text();
+        let cloudLeads = decryptPayload(cloudText);
+        if (!cloudLeads) {
+            try { cloudLeads = JSON.parse(cloudText); } catch(e) {}
+        }
+        if (cloudLeads && Array.isArray(cloudLeads)) {
+            const validLeads = cloudLeads.filter(lead => {
+                const isAnon = !lead.nombre || lead.nombre.trim() === "" || lead.nombre.toLowerCase().includes("anon");
+                const hasPhone = lead.telefono && lead.telefono.trim() !== "";
+                const hasCareer = lead.carrera && lead.carrera.trim() !== "";
+                return !isAnon && hasPhone && hasCareer;
+            });
+            const savedCount = parseInt(sessionStorage.getItem('unifreire_last_lead_count') || '0');
+            if(savedCount > 0 && validLeads.length > savedCount) {
+                const badge = document.getElementById('notif-badge');
+                if(badge) {
+                    badge.style.display = 'flex';
+                    badge.innerText = (validLeads.length - savedCount).toString();
+                    
+                    // Actualizar local sin recargar agresivamente para no interrumpir al usuario
+                    allLeads = validLeads;
+                    allLeads.sort((a,b) => {
+                        const pd = (dStr) => {
+                            if(!dStr) return 0;
+                            if(dStr.includes('/')) {
+                                const p = dStr.split('/');
+                                if(p.length >= 4) return new Date(p[2], p[1]-1, p[0], p[3].split(':')[0], p[3].split(':')[1]).getTime();
+                            }
+                            return new Date(dStr).getTime();
+                        };
+                        return pd(b.fecha) - pd(a.fecha);
+                    });
+                    localStorage.setItem('unifreire_leads', JSON.stringify(allLeads));
+                }
+            }
+        }
+    } catch(e) {}
+}, 45000); // Cada 45 segundos
+
+document.addEventListener('DOMContentLoaded', () => {
+    const bell = document.getElementById('notif-bell');
+    if(bell) {
+        bell.addEventListener('click', () => {
+            const badge = document.getElementById('notif-badge');
+            if(badge) badge.style.display = 'none';
+            sessionStorage.setItem('unifreire_last_lead_count', allLeads.length.toString());
+            renderLeadsPage(); // Force re-render just in case
+        });
+    }
+});
